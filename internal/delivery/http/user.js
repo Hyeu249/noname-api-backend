@@ -1,21 +1,25 @@
 const express = require("express");
-const httpStatus = require("http-status-codes");
-
-//declare
-const {
-  OK: StatusOK,
-  BAD_REQUEST: StatusBadRequest,
-  NOT_FOUND: StatusNotFound,
-  INTERNAL_SERVER_ERROR: StatusInternalServerError,
-} = httpStatus;
+const { StatusCodes } = require("http-status-codes");
+const userService = require("@server/internal/implementation/user_service");
 
 const router = new express.Router();
 
-router.get("/users", async (req, res) => {
+const { OK, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = StatusCodes;
+const internalServerError = "Something bad happened in our server. Please contact the Administrator.";
+
+router.post("/users", async (req, res) => {
   try {
-    res.status(StatusOK).send({ message: "Hello World!!!" });
-  } catch (e) {
-    res.status(StatusInternalServerError).send(e);
+    const err = await userService.createUser(req.body);
+    if (err !== null) {
+      throw new Error(err);
+    }
+
+    res.status(OK).send({ message: "Hello World!!!" });
+  } catch (error) {
+    switch (error) {
+      default:
+        res.status(INTERNAL_SERVER_ERROR).send(internalServerError);
+    }
   }
 });
 
