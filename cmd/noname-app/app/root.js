@@ -1,60 +1,70 @@
 const express = require("express");
 const cors = require("cors");
-const yargs = require("yargs/yargs");
-const { hideBin } = require("yargs/helpers");
-const sequelize = require("@server/lib/sequelize/sequelize");
 
-const userRouter = require("@server/internal/delivery/http/user");
-const yargs_ = require("@server/lib/yargs/support");
-require("./version");
+const Yargs = require("@server/lib/yargs");
+const Sequelize = require("@server/lib/sequelize");
+const log = require("@server/lib/log");
+const morgan = require("@server/lib/morgan");
+const http = require("@server/internal/delivery/http");
 
-const parser = yargs(hideBin(process.argv))
-  .command("serve", "Serve the app.", async ({ argv }) => {
-    //declare
-    const { dbType, dbStr, debug, listenPort } = argv;
+const Version = require("./version");
+Version.Use("1.0.0");
 
-    try {
-      if (debug) {
-        console.log("enable debug mode.");
-      }
+class App {
+  constructor() {}
 
-      //start db
-      var [sequelizeDb, err] = await sequelize.open(dbType, dbStr);
-      if (err !== null) {
-        throw new Error(err);
-      }
+  static Execute() {
+    Yargs.Start()
+      .command("serve", "Serve the app.", yargsServeHandler)
 
-      // Run the auto migration tool.
-      var err = sequelize.schema.create(sequelizeDb);
-      if (err !== null) {
-        throw new Error(err);
-      }
+      .option("host", Yargs.PersistentFlags().StringVar("Host of my app.", "localhost"))
+      .option("listen-port", Yargs.PersistentFlags().StringVar("Host of my app.", "3000", "p"))
+      .option("jwt-secret", Yargs.PersistentFlags().StringVar("JWT secret used to generate JWT token."))
+      .option("db-type", Yargs.PersistentFlags().StringVar("DB type. E.g. sqlite3"))
+      .option("db-str", Yargs.PersistentFlags().StringVar("Connection string to the DB."))
+      .option("debug", Yargs.PersistentFlags().BoolVarP("Enable debug mode.", "d"))
+      .parse();
+  }
+}
 
-      // Create a new http server via express.
-      const app = express();
+module.exports = App;
 
-      app.use(express.json());
-      app.use(cors());
-      app.use(userRouter);
+async function yargsServeHandler({ argv }) {
+  //declare
+  const { dbType, dbStr, debug, listenPort } = argv;
 
-      //start server
-      app.listen(listenPort, () => {
-        console.log("Server is up on port " + listenPort);
-      });
-
-      // const closeDb = await sequelizeDb.close();
-    } catch (error) {
-      console.log("error from the app:", error);
+  try {
+    if (debug) {
+      log.SetLevel(log.DebugLevel);
     }
-  })
+    //start db
+    var [sequelizeDb, err] = await Sequelize.Open(dbType, dbStr);
 
-  .option("host", yargs_.PersistentFlags().StringVar("Host of my app.", "localhost"))
-  .option("listen-port", yargs_.PersistentFlags().StringVar("Host of my app.", "3000", "p"))
-  .option("jwt-secret", yargs_.PersistentFlags().StringVar("JWT secret used to generate JWT token."))
-  .option("db-type", yargs_.PersistentFlags().StringVar("DB type. E.g. sqlite3"))
-  .option("db-str", yargs_.PersistentFlags().StringVar("Connection string to the DB."))
-  .option("debug", yargs_.PersistentFlags().BoolVarP("Enable debug mode.", "d"));
+    if (err !== null) {
+      throw new Error(err);
+    }
 
-module.exports = {
-  Execute: () => parser.parse(),
-};
+    // Run the auto migration tool.
+    var err = Sequelize.Schema.Create(sequelizeDb);
+    if (err !== null) {
+      throw new Error(err);
+    }
+
+    // Create a new http server via express.
+    const app = express();
+
+    app.use(express.json());
+    app.use(cors());
+    app.use(morgan.Middleware());
+    app.use(http.AttachUserServiceHTTPHandler(sequelizeDb));
+
+    //start server
+    app.listen(listenPort, () => {
+      log.Info("Server is up on port " + listenPort);
+    });
+
+    // const closeDb = await sequelizeDb.close();
+  } catch (error) {
+    log.Error("error from the app:", error);
+  }
+}

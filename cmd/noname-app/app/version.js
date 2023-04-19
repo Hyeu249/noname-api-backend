@@ -1,3 +1,11 @@
-const yargs = require("yargs");
+const yargs = require("@server/lib/yargs");
 
-yargs.version("1.0.0");
+class Version {
+  constructor() {}
+
+  static Use(version) {
+    yargs.Version(version);
+    return this;
+  }
+}
+module.exports = Version;
