@@ -5,11 +5,12 @@ const Var = {
   InternalDataBaseError: "Database insert error.",
   //validate
   MalformedJSONErrResMsg: "Payload is in wrong JSON format.",
+  validationFailureErrResMsg: "Validation failed.",
+  InternalErorAtValidation: "Internal error at validation.",
+
   RequiredFieldError: "Error! Missing Required Field.",
   GteValidationFailed: "Error! gte validation failed",
   PayloadEmailInvalid: "Payload email invalid.",
-  InternalErorAtValidation: "Internal error at validation.",
-
   StructTagFormatWithoutColon: "Struct tag format without colon.",
   StructDontHaveFieldName: "Error! struct don't have field name.",
   GteStructMustHaveEqualSign: "Error! gte struct must have equal sign.",

@@ -1,6 +1,7 @@
 const Repo = require("@server/internal/repo");
 const domain = require("@server/internal/domain");
 const log = require("@server/lib/log");
+const help = require("@server/lib/help");
 
 class UserService {
   constructor() {}
@@ -43,7 +44,9 @@ async function Register(db, body) {
     return null;
   } catch (error) {
     await tx.rollback();
+    const parseError = help.ParseErrorMessage(error.message);
+
     log.Error("Finish USER Register Service with error", error);
-    return error;
+    return parseError;
   }
 }

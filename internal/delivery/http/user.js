@@ -33,18 +33,18 @@ async function register(req, res) {
     var [body, err] = validator.Bind(req.body, domain.UserRegisterRequest).ValidateStruct().Parse();
     if (err !== null) {
       switch (err) {
-        case domain.InternalErorAtValidation:
-          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalErorAtValidation });
+        case domain.MalformedJSONErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.MalformedJSONErrResMsg });
+        case domain.validationFailureErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.validationFailureErrResMsg });
         default:
-          return res.status(BAD_REQUEST).send({ message: err });
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalErorAtValidation });
       }
     }
     //service
     var err = await Service.UserService.Register(db, body);
     if (err !== null) {
-      const parseError = help.ParseErrorMessage(err.message);
-
-      switch (parseError) {
+      switch (err) {
         case domain.ErrUsernameAlreadyExist:
           return res.status(BAD_REQUEST).send({ message: domain.ErrUsernameAlreadyExist });
         case domain.ErrEmailAlreadyExist:
