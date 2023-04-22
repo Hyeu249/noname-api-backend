@@ -1,3 +1,8 @@
-const user = require("./user");
+const User = require("./user");
 
-module.exports = { ...user };
+class Http {
+  constructor() {}
+  static AttachUserServiceHTTPHandler = User.AttachUserServiceHTTPHandler;
+}
+
+module.exports = Http;

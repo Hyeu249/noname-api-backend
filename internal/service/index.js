@@ -1,3 +1,8 @@
-const userService = require("./user_service");
+const UserService = require("./user_service");
 
-module.exports = { userService };
+class Service {
+  constructor() {}
+  static UserService = UserService;
+}
+
+module.exports = Service;

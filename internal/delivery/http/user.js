@@ -1,17 +1,20 @@
 const express = require("express");
 const { StatusCodes } = require("http-status-codes");
 
-const service = require("@server/internal/service");
+const Service = require("@server/internal/service");
 const domain = require("@server/internal/domain");
 const validator = require("@server/lib/validator");
 const help = require("@server/lib/help");
 
 const { OK, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = StatusCodes;
 
+class User {
+  constructor() {}
+  static AttachUserServiceHTTPHandler = AttachUserServiceHTTPHandler;
+}
+
 // module.exports = router;
-module.exports = {
-  AttachUserServiceHTTPHandler: AttachUserServiceHTTPHandler,
-};
+module.exports = User;
 
 function AttachUserServiceHTTPHandler(db) {
   const router = new express.Router();
@@ -37,7 +40,7 @@ async function register(req, res) {
       }
     }
     //service
-    var err = await service.userService.Register(db, body);
+    var err = await Service.UserService.Register(db, body);
     if (err !== null) {
       const parseError = help.ParseErrorMessage(err.message);
 

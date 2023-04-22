@@ -1,3 +1,8 @@
-const userRepo = require("./user_repo");
+const UserRepo = require("./user_repo");
 
-module.exports = { userRepo };
+class Repo {
+  constructor() {}
+  static UserRepo = UserRepo;
+}
+
+module.exports = Repo;

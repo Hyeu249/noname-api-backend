@@ -5,7 +5,7 @@ const Yargs = require("@server/lib/yargs");
 const Sequelize = require("@server/lib/sequelize");
 const log = require("@server/lib/log");
 const morgan = require("@server/lib/morgan");
-const http = require("@server/internal/delivery/http");
+const Http = require("@server/internal/delivery/http");
 
 const Version = require("./version");
 Version.Use("1.0.0");
@@ -56,7 +56,7 @@ async function yargsServeHandler({ argv }) {
     app.use(express.json());
     app.use(cors());
     app.use(morgan.Middleware());
-    app.use(http.AttachUserServiceHTTPHandler(sequelizeDb));
+    app.use(Http.AttachUserServiceHTTPHandler(sequelizeDb));
 
     //start server
     app.listen(listenPort, () => {

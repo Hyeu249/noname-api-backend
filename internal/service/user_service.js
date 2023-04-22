@@ -1,10 +1,13 @@
-const repo = require("@server/internal/repo");
+const Repo = require("@server/internal/repo");
 const domain = require("@server/internal/domain");
 const log = require("@server/lib/log");
 
-module.exports = {
-  Register,
-};
+class UserService {
+  constructor() {}
+  static Register = Register;
+}
+
+module.exports = UserService;
 
 async function Register(db, body) {
   log.Service("Start USER Register Service");
@@ -12,7 +15,7 @@ async function Register(db, body) {
 
   try {
     // Check if username already exist
-    var [isUsernameExist, err] = await repo.userRepo.IsUsernameExist(tx, body);
+    var [isUsernameExist, err] = await Repo.UserRepo.IsUsernameExist(tx, body);
     if (err !== null) {
       throw new Error(err);
     }
@@ -21,7 +24,7 @@ async function Register(db, body) {
     }
 
     //check if email already exist
-    var [isEmailExist, err] = await repo.userRepo.IsEmailExist(tx, body);
+    var [isEmailExist, err] = await Repo.UserRepo.IsEmailExist(tx, body);
     if (err !== null) {
       throw new Error(err);
     }
@@ -30,7 +33,7 @@ async function Register(db, body) {
     }
 
     //insert new user
-    err = await repo.userRepo.InsertNewUser(tx, body);
+    err = await Repo.UserRepo.InsertNewUser(tx, body);
     if (err !== null) {
       throw new Error(err);
     }

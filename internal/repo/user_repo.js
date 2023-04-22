@@ -1,7 +1,14 @@
 const Sequelize = require("@server/lib/sequelize");
 const log = require("@server/lib/log");
 
-module.exports = { InsertNewUser, IsUsernameExist, IsEmailExist };
+class UserRepo {
+  constructor() {}
+  static InsertNewUser = InsertNewUser;
+  static IsUsernameExist = IsUsernameExist;
+  static IsEmailExist = IsEmailExist;
+}
+
+module.exports = UserRepo;
 
 async function InsertNewUser(tx, body) {
   log.Repo("Start USER Repo InsertNewUser");
