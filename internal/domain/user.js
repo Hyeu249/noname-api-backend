@@ -3,7 +3,10 @@ const dataTypes = require("@server/lib/dataTypes");
 const Var = {
   ErrUsernameAlreadyExist: "Username already exists.",
   ErrEmailAlreadyExist: "Email already exists.",
-  MsgUserRegisterSuccess: "register successfully.",
+  MsgUserRegisterSuccess: "Register successfully.",
+  MsgUserLoginSuccess: "Login successfully.",
+
+  ErrIncorrectUsernamePwd: "incorrect username or/and password.",
 };
 
 const UserRegisterRequest = {
@@ -27,4 +30,9 @@ const UserRegisterRequest = {
   },
 };
 
-module.exports = { ...Var, UserRegisterRequest };
+const UserLoginRequest = {
+  user_name: { type: dataTypes.STRING, validate: ["required"] },
+  pass_word: { type: dataTypes.STRING, validate: ["required"] },
+};
+
+module.exports = { ...Var, UserRegisterRequest, UserLoginRequest };
