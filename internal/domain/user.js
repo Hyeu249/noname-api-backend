@@ -10,29 +10,24 @@ const Var = {
 };
 
 const UserRegisterRequest = {
-  // First name of user (Ten nguoi dung)
-  first_name: {
+  name: {
     type: dataTypes.STRING,
     validate: ["required"],
   },
-  // Last name of user (Ho nguoi dung)
-  last_name: {
-    type: dataTypes.STRING,
-    validate: ["required"],
-  },
+
   user_name: {
     type: dataTypes.STRING,
     validate: ["required"],
   },
-  email: {
+  password: {
     type: dataTypes.STRING,
-    validate: ["required", "email"],
+    validate: ["required"],
   },
 };
 
 const UserLoginRequest = {
   user_name: { type: dataTypes.STRING, validate: ["required"] },
-  pass_word: { type: dataTypes.STRING, validate: ["required"] },
+  password: { type: dataTypes.STRING, validate: ["required"] },
 };
 
 module.exports = { ...Var, UserRegisterRequest, UserLoginRequest };

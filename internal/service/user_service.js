@@ -27,7 +27,7 @@ async function Register(db, body) {
       throw new Error(domain.ErrUsernameAlreadyExist);
     }
 
-    const hashPwd = await Bcrypt.Bcrypt(body.password);
+    const hashPwd = await Bcrypt.GetPwdHash(body.password);
     body.hashPwd = hashPwd;
 
     //insert new user
@@ -59,11 +59,11 @@ async function Login(db, body) {
       throw new Error(err);
     }
     // return ErrIncorrectUsernamePwd, if cannot find user.
-    if (User.id) {
+    if (User === null) {
       throw new Error(domain.ErrIncorrectUsernamePwd);
     }
 
-    const isMatch = await Bcrypt.CompareHashAndPwd(req.password, User.password);
+    const isMatch = await Bcrypt.CompareHashAndPwd(body.password, User.hashed_pwd);
     if (!isMatch) {
       throw new Error(domain.ErrIncorrectUsernamePwd);
     }
@@ -71,8 +71,8 @@ async function Login(db, body) {
     const tokenStr = await Jwt.SignedUserUUID(User.id);
 
     //insert new user
-    var [user, err] = await Repo.UserRepo.ActivateUser(tx);
-    console.log("user: ", user);
+    var [user, err] = await Repo.UserRepo.ActivateUser(tx, User.id);
+    console.log("user-2: ", user);
     if (err !== null) {
       throw new Error(err);
     }

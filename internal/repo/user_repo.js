@@ -106,7 +106,7 @@ async function GetUserUUIDPwdByUsername(tx, user_name) {
       { transaction: tx }
     )
       .then((user) => {
-        user = user;
+        User = user;
       })
       .catch((error) => {
         throw new Error(error);
@@ -120,7 +120,7 @@ async function GetUserUUIDPwdByUsername(tx, user_name) {
   }
 }
 
-async function ActivateUser(tx) {
+async function ActivateUser(tx, user_id) {
   log.Repo("Start USER Repo ActivateUser");
   let User = null;
 
@@ -128,6 +128,9 @@ async function ActivateUser(tx) {
     await Sequelize.User.update(
       {
         is_active: true,
+      },
+      {
+        where: { id: user_id },
       },
       { transaction: tx }
     )
