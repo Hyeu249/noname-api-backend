@@ -72,7 +72,6 @@ async function Login(db, body) {
 
     //insert new user
     var [user, err] = await Repo.UserRepo.ActivateUser(tx, User.id);
-    console.log("user-2: ", user);
     if (err !== null) {
       throw new Error(err);
     }

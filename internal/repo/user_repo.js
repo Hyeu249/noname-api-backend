@@ -131,8 +131,8 @@ async function ActivateUser(tx, user_id) {
       },
       {
         where: { id: user_id },
-      },
-      { transaction: tx }
+        transaction: tx,
+      }
     )
       .then((user) => {
         user = user;
