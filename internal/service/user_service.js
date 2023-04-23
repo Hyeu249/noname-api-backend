@@ -2,6 +2,8 @@ const Repo = require("@server/internal/repo");
 const domain = require("@server/internal/domain");
 const log = require("@server/lib/log");
 const help = require("@server/lib/help");
+const Bcrypt = require("@server/lib/bcrypt");
+const Jwt = require("@server/lib/jwt");
 
 class UserService {
   constructor() {}
@@ -17,7 +19,7 @@ async function Register(db, body) {
 
   try {
     // Check if username already exist
-    var [isUsernameExist, err] = await Repo.UserRepo.IsUsernameExist(tx, body);
+    var [isUsernameExist, err] = await Repo.UserRepo.IsUsernameExist(tx, body.user_name);
     if (err !== null) {
       throw new Error(err);
     }
@@ -25,14 +27,8 @@ async function Register(db, body) {
       throw new Error(domain.ErrUsernameAlreadyExist);
     }
 
-    //check if email already exist
-    var [isEmailExist, err] = await Repo.UserRepo.IsEmailExist(tx, body);
-    if (err !== null) {
-      throw new Error(err);
-    }
-    if (isEmailExist) {
-      throw new Error(domain.ErrEmailAlreadyExist);
-    }
+    const hashPwd = await Bcrypt.Bcrypt(body.password);
+    body.hashPwd = hashPwd;
 
     //insert new user
     err = await Repo.UserRepo.InsertNewUser(tx, body);
@@ -57,38 +53,38 @@ async function Login(db, body) {
   const tx = await db.transaction();
 
   try {
-    // Check if username already exist
-    var [isUsernameExist, err] = await Repo.UserRepo.IsUsernameExist(tx, body);
+    // Get user_uuid, pwd By username
+    var [User, err] = await Repo.UserRepo.GetUserUUIDPwdByUsername(tx, body.user_name);
     if (err !== null) {
       throw new Error(err);
     }
-    if (isUsernameExist) {
-      throw new Error(domain.ErrUsernameAlreadyExist);
+    // return ErrIncorrectUsernamePwd, if cannot find user.
+    if (User.id) {
+      throw new Error(domain.ErrIncorrectUsernamePwd);
     }
 
-    //check if email already exist
-    var [isEmailExist, err] = await Repo.UserRepo.IsEmailExist(tx, body);
-    if (err !== null) {
-      throw new Error(err);
+    const isMatch = await Bcrypt.CompareHashAndPwd(req.password, User.password);
+    if (!isMatch) {
+      throw new Error(domain.ErrIncorrectUsernamePwd);
     }
-    if (isEmailExist) {
-      throw new Error(domain.ErrEmailAlreadyExist);
-    }
+
+    const tokenStr = await Jwt.SignedUserUUID(User.id);
 
     //insert new user
-    err = await Repo.UserRepo.InsertNewUser(tx, body);
+    var [user, err] = await Repo.UserRepo.ActivateUser(tx);
+    console.log("user: ", user);
     if (err !== null) {
       throw new Error(err);
     }
 
     await tx.commit();
     log.Service("Finish USER Login Service");
-    return null;
+    return [tokenStr, null];
   } catch (error) {
     await tx.rollback();
     const parseError = help.ParseErrorMessage(error.message);
 
     log.Error("Finish USER Login Service with error", error);
-    return parseError;
+    return [null, parseError];
   }
 }
