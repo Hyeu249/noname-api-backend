@@ -7,6 +7,7 @@ const Var = {
   MsgUserLoginSuccess: "Login successfully.",
 
   ErrIncorrectUsernamePwd: "incorrect username or/and password.",
+  CantActiveThisUser: "Cant active this user.",
 };
 
 const UserRegisterRequest = {

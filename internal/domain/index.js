@@ -3,6 +3,7 @@ const userDomain = require("./user");
 const Var = {
   InternalServerError: "Something bad happened in our server. Please contact the Administrator.",
   InternalDataBaseError: "Database insert error.",
+  PleaseAuthenticate: "Please authenticate.",
   //validate
   MalformedJSONErrResMsg: "Payload is in wrong JSON format.",
   validationFailureErrResMsg: "Validation failed.",

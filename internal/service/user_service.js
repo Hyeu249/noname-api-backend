@@ -54,26 +54,29 @@ async function Login(db, body) {
 
   try {
     // Get user_uuid, pwd By username
-    var [User, err] = await Repo.UserRepo.GetUserUUIDPwdByUsername(tx, body.user_name);
+    var [userUUID, pwd, err] = await Repo.UserRepo.GetUserUUIDPwdByUsername(tx, body.user_name);
     if (err !== null) {
       throw new Error(err);
     }
     // return ErrIncorrectUsernamePwd, if cannot find user.
-    if (User === null) {
+    if (userUUID === null) {
       throw new Error(domain.ErrIncorrectUsernamePwd);
     }
 
-    const isMatch = await Bcrypt.CompareHashAndPwd(body.password, User.hashed_pwd);
+    const isMatch = await Bcrypt.CompareHashAndPwd(body.password, pwd);
     if (!isMatch) {
       throw new Error(domain.ErrIncorrectUsernamePwd);
     }
 
-    const tokenStr = await Jwt.SignedUserUUID(User.id);
+    const tokenStr = await Jwt.SignedUserUUID(userUUID);
 
     //insert new user
-    var [user, err] = await Repo.UserRepo.ActivateUser(tx, User.id);
+    var [isActivated, err] = await Repo.UserRepo.ActivateUser(tx, userUUID);
     if (err !== null) {
       throw new Error(err);
+    }
+    if (!isActivated) {
+      throw new Error(domain.CantActiveThisUser);
     }
 
     await tx.commit();

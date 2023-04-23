@@ -93,7 +93,8 @@ async function IsEmailExist(tx, email) {
 
 async function GetUserUUIDPwdByUsername(tx, user_name) {
   log.Repo("Start USER Repo GetUserUUIDPwdByUsername");
-  let User = null;
+  let userUUID = null;
+  let pwd = null;
 
   try {
     await Sequelize.User.findOne(
@@ -106,23 +107,25 @@ async function GetUserUUIDPwdByUsername(tx, user_name) {
       { transaction: tx }
     )
       .then((user) => {
-        User = user;
+        if (user === null) return;
+        userUUID = user?.id;
+        pwd = user?.hashed_pwd;
       })
       .catch((error) => {
         throw new Error(error);
       });
 
     log.Repo("Finish USER Repo GetUserUUIDPwdByUsername");
-    return [User, null];
+    return [userUUID, pwd, null];
   } catch (error) {
     log.Error("Finish USER Repo GetUserUUIDPwdByUsername with error", error);
-    return [null, error];
+    return [null, null, error];
   }
 }
 
 async function ActivateUser(tx, user_id) {
   log.Repo("Start USER Repo ActivateUser");
-  let User = null;
+  let isActivated = null;
 
   try {
     await Sequelize.User.update(
@@ -134,15 +137,15 @@ async function ActivateUser(tx, user_id) {
         transaction: tx,
       }
     )
-      .then((user) => {
-        user = user;
+      .then((count) => {
+        isActivated = count > 0;
       })
       .catch((error) => {
         throw new Error(error);
       });
 
     log.Repo("Finish USER Repo ActivateUser");
-    return [User, null];
+    return [isActivated, null];
   } catch (error) {
     log.Error("Finish USER Repo ActivateUser with error", error);
     return [null, error];

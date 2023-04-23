@@ -47,8 +47,6 @@ async function register(req, res) {
       switch (err) {
         case domain.ErrUsernameAlreadyExist:
           return res.status(BAD_REQUEST).send({ message: domain.ErrUsernameAlreadyExist });
-        case domain.ErrEmailAlreadyExist:
-          return res.status(BAD_REQUEST).send({ message: domain.ErrEmailAlreadyExist });
         default:
           return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
       }
