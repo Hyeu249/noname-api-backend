@@ -4,7 +4,6 @@ const { StatusCodes } = require("http-status-codes");
 const Service = require("@server/internal/service");
 const domain = require("@server/internal/domain");
 const validator = require("@server/lib/validator");
-const help = require("@server/lib/help");
 
 const { OK, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = StatusCodes;
 
