@@ -1,5 +1,5 @@
 const UserService = require("./user_service");
-const ImageService = require("./user_service");
+const ImageService = require("./image_service");
 
 class Service {
   constructor() {}

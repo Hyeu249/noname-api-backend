@@ -6,7 +6,6 @@ const help = require("@server/lib/help");
 class ImageService {
   constructor() {}
   static uploadImage = uploadImage;
-  static Login = Login;
 }
 
 module.exports = ImageService;
@@ -16,18 +15,9 @@ async function uploadImage(db, body) {
   const tx = await db.transaction();
 
   try {
-    // Check if imagename already exist
-    var [isImagenameExist, err] = await Repo.ImageRepo.IsImagenameExist(tx, body.image_name);
-    if (err !== null) {
-      throw new Error(err);
-    }
-    if (isImagenameExist) {
-      throw new Error(domain.ErrImagenameAlreadyExist);
-    }
+    throw new Error("hello");
 
-    const hashPwd = await Bcrypt.GetPwdHash(body.password);
-    body.hashPwd = hashPwd;
-
+    body.location = "";
     //insert new image
     err = await Repo.ImageRepo.InsertNewImage(tx, body);
     if (err !== null) {
