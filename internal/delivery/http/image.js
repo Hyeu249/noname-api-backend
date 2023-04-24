@@ -16,7 +16,7 @@ class User {
 // module.exports = router;
 module.exports = User;
 
-function AttachImageServiceHTTPHandler(db) {
+function AttachImageServiceHTTPHandler(db, middleware) {
   const router = new express.Router();
 
   const g = "/images";
