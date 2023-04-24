@@ -31,8 +31,21 @@ async function uploadImage(req, res) {
   const { db } = this;
 
   try {
+    console.log("req-body: ", req.body);
+    //validate struct
+    var [body, err] = validator.Bind(req.body, domain.ImageUploadRequest).ValidateStruct().Parse();
+    if (err !== null) {
+      switch (err) {
+        case domain.MalformedJSONErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.MalformedJSONErrResMsg });
+        case domain.validationFailureErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.validationFailureErrResMsg });
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalErorAtValidation });
+      }
+    }
     //service
-    var err = await Service.ImageService.uploadImage(db, req.file);
+    var err = await Service.ImageService.uploadImage(db, body);
     if (err !== null) {
       switch (err) {
         default:
