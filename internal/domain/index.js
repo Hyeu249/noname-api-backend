@@ -1,4 +1,5 @@
 const userDomain = require("./user");
+const imageDomain = require("./image");
 
 const Var = {
   InternalServerError: "Something bad happened in our server. Please contact the Administrator.",
@@ -25,4 +26,5 @@ module.exports = {
   ...Var,
   //other
   ...userDomain,
+  ...imageDomain,
 };
