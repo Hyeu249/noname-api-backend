@@ -6,6 +6,7 @@ const help = require("@server/lib/help");
 class ImageService {
   constructor() {}
   static uploadImage = uploadImage;
+  static GetImage = GetImage;
 }
 
 module.exports = ImageService;
@@ -30,5 +31,31 @@ async function uploadImage(db, body) {
 
     log.Error("Finish IMAGE uploadImage Service with error", error);
     return parseError;
+  }
+}
+
+async function GetImage(db, image_id) {
+  log.Service("Start IMAGE GetImage Service");
+  const tx = await db.transaction();
+
+  try {
+    //insert new image
+    const [location, err] = await Repo.ImageRepo.GetImageLocation(tx, image_id);
+    if (err !== null) {
+      throw new Error(err);
+    }
+    if (location === null) {
+      throw new Error(domain.ImageNotFound);
+    }
+
+    await tx.commit();
+    log.Service("Finish IMAGE GetImage Service");
+    return [location, null];
+  } catch (error) {
+    await tx.rollback();
+    const parseError = help.ParseErrorMessage(error.message);
+
+    log.Error("Finish IMAGE GetImage Service with error", error);
+    return [null, parseError];
   }
 }

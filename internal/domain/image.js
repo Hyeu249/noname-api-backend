@@ -4,6 +4,8 @@ const Var = {
   MsgImageUploadSuccess: "Upload image successfully.",
   MsgImageDownloadSuccess: "Download image successfully.",
   MsgImageDeleteSuccess: "Delete image successfully.",
+
+  ImageNotFound: "Image not found.",
 };
 
 const ImageUploadRequest = {

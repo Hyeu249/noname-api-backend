@@ -31,7 +31,6 @@ async function uploadImage(req, res) {
   const { db } = this;
 
   try {
-    console.log("req-body: ", req.body);
     //validate struct
     var [body, err] = validator.Bind(req.body, domain.ImageUploadRequest).ValidateStruct().Parse();
     if (err !== null) {
@@ -55,10 +54,41 @@ async function uploadImage(req, res) {
 
     return res.status(OK).send({ message: domain.MsgImageUploadSuccess });
   } catch (error) {
-    console.log("error: ", error.message);
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }
 }
 
-async function downloadImage(req, res) {}
+async function downloadImage(req, res) {
+  const { db } = this;
+
+  try {
+    //validate struct
+    var [body, err] = validator.Bind(req.query, domain.ImageDownloadRequest).ValidateStruct().Parse();
+    if (err !== null) {
+      switch (err) {
+        case domain.MalformedJSONErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.MalformedJSONErrResMsg });
+        case domain.validationFailureErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.validationFailureErrResMsg });
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalErorAtValidation });
+      }
+    }
+    //service
+    var [image, err] = await Service.ImageService.GetImage(db, body.id);
+    if (err !== null) {
+      switch (err) {
+        case domain.ImageNotFound:
+          return res.status(BAD_REQUEST).send({ message: domain.ImageNotFound });
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
+      }
+    }
+
+    return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, image: image });
+  } catch (error) {
+    console.log("error: ", error);
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
+  }
+}
 async function deleteImage(req, res) {}
