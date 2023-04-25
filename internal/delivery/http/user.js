@@ -80,6 +80,8 @@ async function login(req, res) {
       switch (err) {
         case domain.ErrIncorrectUsernamePwd:
           return res.status(BAD_REQUEST).send({ message: domain.ErrIncorrectUsernamePwd });
+        case domain.CantActiveThisUser:
+          return res.status(BAD_REQUEST).send({ message: domain.CantActiveThisUser });
         default:
           return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
       }
