@@ -18,7 +18,7 @@ async function uploadImage(db, body) {
 
   try {
     //insert new image
-    err = await Repo.ImageRepo.InsertNewImage(tx, body);
+    const err = await Repo.ImageRepo.InsertNewImage(tx, body);
     if (err !== null) {
       throw new Error(err);
     }

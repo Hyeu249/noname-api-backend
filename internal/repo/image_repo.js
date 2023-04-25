@@ -1,5 +1,3 @@
-const fs = require("fs");
-
 const Sequelize = require("@server/lib/sequelize");
 const log = require("@server/lib/log");
 
@@ -15,7 +13,7 @@ async function InsertNewImage(tx, body) {
   log.Repo("Start IMAGE Repo InsertNewImage");
 
   try {
-    await Sequelize.Image.create(
+    const _ = await Sequelize.Image.create(
       {
         name: body.name,
         description: body.description,
@@ -23,11 +21,7 @@ async function InsertNewImage(tx, body) {
         location: body.location,
       },
       { transaction: tx }
-    )
-      .then(() => {})
-      .catch((error) => {
-        throw new Error(error);
-      });
+    );
 
     log.Repo("Finish IMAGE Repo InsertNewImage");
     return null;
@@ -39,10 +33,9 @@ async function InsertNewImage(tx, body) {
 
 async function GetImageLocation(tx, image_id) {
   log.Repo("Start IMAGE Repo GetImageLocation");
-  let location = null;
 
   try {
-    await Sequelize.Image.findOne(
+    const { location } = await Sequelize.Image.findOne(
       {
         attributes: ["location"],
         where: {
@@ -50,14 +43,7 @@ async function GetImageLocation(tx, image_id) {
         },
       },
       { transaction: tx }
-    )
-      .then((image) => {
-        if (image === null) return;
-        location = image?.location;
-      })
-      .catch((error) => {
-        throw new Error(error);
-      });
+    );
 
     log.Repo("Finish IMAGE Repo GetImageLocation");
     return [location, null];
@@ -71,18 +57,14 @@ async function DetroyImage(tx, image_id) {
   log.Repo("Start IMAGE Repo DetroyImage");
 
   try {
-    await Sequelize.Image.destroy(
+    const _ = await Sequelize.Image.destroy(
       {
         where: {
           id: image_id,
         },
       },
       { transaction: tx }
-    )
-      .then(() => {})
-      .catch((error) => {
-        throw new Error(error);
-      });
+    );
 
     log.Repo("Finish IMAGE Repo DetroyImage");
     return null;
