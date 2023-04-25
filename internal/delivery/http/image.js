@@ -22,7 +22,7 @@ function AttachImageServiceHTTPHandler(db, middleware) {
   const g = "/images";
 
   router.post(g + "", Multer.StoreImageToLocal(), uploadImage.bind({ db }));
-  router.get(g + "", downloadImage.bind({ db }));
+  router.get(g + "/:id", downloadImage.bind({ db }));
   router.delete(g + "/:id", deleteImage.bind({ db }));
   return router;
 }
@@ -63,7 +63,7 @@ async function downloadImage(req, res) {
 
   try {
     //validate struct
-    var [body, err] = validator.Bind(req.query, domain.ImageDownloadRequest).ValidateStruct().Parse();
+    var [body, err] = validator.Bind({ id: req.params.id }, domain.ImageDownloadRequest).ValidateStruct().Parse();
     if (err !== null) {
       switch (err) {
         case domain.MalformedJSONErrResMsg:
