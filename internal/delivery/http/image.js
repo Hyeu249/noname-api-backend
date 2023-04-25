@@ -78,8 +78,10 @@ async function downloadImage(req, res) {
     var [image, err] = await Service.ImageService.GetImage(db, body.id);
     if (err !== null) {
       switch (err) {
-        case domain.ImageNotFound:
-          return res.status(BAD_REQUEST).send({ message: domain.ImageNotFound });
+        case domain.ImageLocationIsNotFound:
+          return res.status(NOT_FOUND).send({ message: domain.ImageLocationIsNotFound });
+        case domain.ImageIsNotFound:
+          return res.status(NOT_FOUND).send({ message: domain.ImageIsNotFound });
         default:
           return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
       }
