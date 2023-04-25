@@ -1,3 +1,5 @@
+const path = require("path");
+
 const express = require("express");
 const cors = require("cors");
 
@@ -54,6 +56,7 @@ async function yargsServeHandler({ argv }) {
     // Create a new http server via express.
     const app = express();
 
+    app.use("/images", express.static(path.join(__dirname, "../../../upload")));
     app.use(express.json());
     app.use(cors());
     app.use(morgan.Middleware());
