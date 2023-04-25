@@ -6,7 +6,7 @@ class UserRepo {
   static InsertNewUser = InsertNewUser;
   static IsUsernameExist = IsUsernameExist;
   static IsEmailExist = IsEmailExist;
-  static GetUserUUIDPwdByUsername = GetUserUUIDPwdByUsername;
+  static GetUserIdPwdByUsername = GetUserIdPwdByUsername;
   static ActivateUser = ActivateUser;
 }
 module.exports = UserRepo;
@@ -73,8 +73,8 @@ async function IsEmailExist(tx, email) {
   }
 }
 
-async function GetUserUUIDPwdByUsername(tx, user_name) {
-  log.Repo("Start USER Repo GetUserUUIDPwdByUsername");
+async function GetUserIdPwdByUsername(tx, user_name) {
+  log.Repo("Start USER Repo GetUserIdPwdByUsername");
 
   try {
     const user = await Sequelize.User.findOne(
@@ -88,10 +88,10 @@ async function GetUserUUIDPwdByUsername(tx, user_name) {
     );
     const { id = null, hashed_pwd = null } = user || {};
 
-    log.Repo("Finish USER Repo GetUserUUIDPwdByUsername");
+    log.Repo("Finish USER Repo GetUserIdPwdByUsername");
     return [id, hashed_pwd, null];
   } catch (error) {
-    log.Error("Finish USER Repo GetUserUUIDPwdByUsername with error", error);
+    log.Error("Finish USER Repo GetUserIdPwdByUsername with error", error);
     return [null, null, error];
   }
 }
@@ -109,7 +109,6 @@ async function ActivateUser(tx, user_id) {
         transaction: tx,
       }
     );
-    console.log("count-after: ", count);
 
     log.Repo("Finish USER Repo ActivateUser");
     return [count[0] > 0, null];

@@ -92,6 +92,7 @@ async function downloadImage(req, res) {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }
 }
+
 async function deleteImage(req, res) {
   const { db } = this;
 

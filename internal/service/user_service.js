@@ -53,13 +53,13 @@ async function Login(db, body) {
   const tx = await db.transaction();
 
   try {
-    // Get user_uuid, pwd By username
-    var [userUUID, pwd, err] = await Repo.UserRepo.GetUserUUIDPwdByUsername(tx, body.user_name);
+    // Get user_id, pwd By username
+    var [user_id, pwd, err] = await Repo.UserRepo.GetUserIdPwdByUsername(tx, body.user_name);
     if (err !== null) {
       throw new Error(err);
     }
     // return ErrIncorrectUsernamePwd, if cannot find user.
-    if (userUUID === null) {
+    if (user_id === null) {
       throw new Error(domain.ErrIncorrectUsernamePwd);
     }
 
@@ -68,10 +68,10 @@ async function Login(db, body) {
       throw new Error(domain.ErrIncorrectUsernamePwd);
     }
 
-    const tokenStr = await Jwt.SignedUserUUID(userUUID);
+    const tokenStr = await Jwt.SignedUserId(user_id);
 
     //insert new user
-    var [isActivated, err] = await Repo.UserRepo.ActivateUser(tx, userUUID);
+    var [isActivated, err] = await Repo.UserRepo.ActivateUser(tx, user_id);
     if (err !== null) {
       throw new Error(err);
     }
