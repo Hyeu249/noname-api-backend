@@ -7,7 +7,6 @@ class ImageRepo {
   constructor() {}
   static InsertNewImage = InsertNewImage;
   static GetImageLocation = GetImageLocation;
-  static GetImageByLocation = GetImageByLocation;
 }
 module.exports = ImageRepo;
 
@@ -63,27 +62,6 @@ async function GetImageLocation(tx, image_id) {
     return [location, null];
   } catch (error) {
     log.Error("Finish IMAGE Repo GetImageLocation with error", error);
-    return [null, error];
-  }
-}
-
-async function GetImageByLocation(tx, location) {
-  log.Repo("Start IMAGE Repo GetImageByLocation");
-  let image = null;
-
-  try {
-    fs.readFile(location, "utf8", (err, data) => {
-      if (err) {
-        console.log("err-repo: ", err);
-        return;
-      }
-      console.log("data-repo: ", data);
-    });
-
-    log.Repo("Finish IMAGE Repo GetImageByLocation");
-    return [image, null];
-  } catch (error) {
-    log.Error("Finish IMAGE Repo GetImageByLocation with error", error);
     return [null, error];
   }
 }

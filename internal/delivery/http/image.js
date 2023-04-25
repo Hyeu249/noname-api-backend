@@ -75,21 +75,18 @@ async function downloadImage(req, res) {
       }
     }
     //service
-    var [image, err] = await Service.ImageService.GetImage(db, body.id);
+    var [location, err] = await Service.ImageService.GetImage(db, body.id);
     if (err !== null) {
       switch (err) {
         case domain.ImageLocationIsNotFound:
           return res.status(NOT_FOUND).send({ message: domain.ImageLocationIsNotFound });
-        case domain.ImageIsNotFound:
-          return res.status(NOT_FOUND).send({ message: domain.ImageIsNotFound });
         default:
           return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
       }
     }
 
-    return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, image: image });
+    return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, imageUrl: req.headers.host + "/" + location });
   } catch (error) {
-    console.log("error: ", error);
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }
 }
