@@ -78,6 +78,8 @@ async function downloadImage(req, res) {
     var [location, err] = await Service.ImageService.GetImage(db, body.id);
     if (err !== null) {
       switch (err) {
+        case domain.ImageIsNotFound:
+          return res.status(NOT_FOUND).send({ message: domain.ImageIsNotFound });
         case domain.ImageLocationIsNotFound:
           return res.status(NOT_FOUND).send({ message: domain.ImageLocationIsNotFound });
         default:
@@ -110,6 +112,8 @@ async function deleteImage(req, res) {
     var err = await Service.ImageService.DeleteImage(db, body.id);
     if (err !== null) {
       switch (err) {
+        case domain.ImageIsNotFound:
+          return res.status(NOT_FOUND).send({ message: domain.ImageIsNotFound });
         default:
           return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
       }

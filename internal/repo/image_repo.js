@@ -6,6 +6,7 @@ class ImageRepo {
   static InsertNewImage = InsertNewImage;
   static GetImageLocation = GetImageLocation;
   static DetroyImage = DetroyImage;
+  static IsImageExist = IsImageExist;
 }
 module.exports = ImageRepo;
 
@@ -71,5 +72,26 @@ async function DetroyImage(tx, image_id) {
   } catch (error) {
     log.Error("Finish IMAGE Repo DetroyImage with error", error);
     return error;
+  }
+}
+
+async function IsImageExist(tx, image_id) {
+  log.Repo("Start IMAGE Repo IsImageExist");
+
+  try {
+    const count = await Sequelize.Image.count(
+      {
+        where: {
+          id: image_id,
+        },
+      },
+      { transaction: tx }
+    );
+
+    log.Repo("Finish IMAGE Repo IsImageExist");
+    return [count > 0, null];
+  } catch (error) {
+    log.Error("Finish IMAGE Repo IsImageExist with error", error);
+    return [null, error];
   }
 }

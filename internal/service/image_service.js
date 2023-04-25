@@ -40,7 +40,15 @@ async function GetImage(db, image_id) {
   const tx = await db.transaction();
 
   try {
-    //insert new image
+    //check id
+    var [isImageExist, err] = await Repo.ImageRepo.IsImageExist(tx, image_id);
+    if (err !== null) {
+      throw new Error(err);
+    }
+    if (!isImageExist) {
+      throw new Error(domain.ImageIsNotFound);
+    }
+    //get image
     var [location, err] = await Repo.ImageRepo.GetImageLocation(tx, image_id);
     if (err !== null) {
       throw new Error(err);
@@ -66,8 +74,16 @@ async function DeleteImage(db, image_id) {
   const tx = await db.transaction();
 
   try {
-    //insert new image
-    const err = await Repo.ImageRepo.DetroyImage(tx, image_id);
+    //check id
+    var [isImageExist, err] = await Repo.ImageRepo.IsImageExist(tx, image_id);
+    if (err !== null) {
+      throw new Error(err);
+    }
+    if (!isImageExist) {
+      throw new Error(domain.ImageIsNotFound);
+    }
+    //detroy new image
+    var err = await Repo.ImageRepo.DetroyImage(tx, image_id);
     if (err !== null) {
       throw new Error(err);
     }
