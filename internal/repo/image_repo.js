@@ -36,7 +36,7 @@ async function GetImageLocation(tx, image_id) {
   log.Repo("Start IMAGE Repo GetImageLocation");
 
   try {
-    const { location } = await Sequelize.Image.findOne(
+    const image = await Sequelize.Image.findOne(
       {
         attributes: ["location"],
         where: {
@@ -45,6 +45,7 @@ async function GetImageLocation(tx, image_id) {
       },
       { transaction: tx }
     );
+    const { location = null } = image || null;
 
     log.Repo("Finish IMAGE Repo GetImageLocation");
     return [location, null];

@@ -87,7 +87,7 @@ async function downloadImage(req, res) {
       }
     }
 
-    return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, imageUrl: req.headers.host + "/" + location });
+    return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, location: location });
   } catch (error) {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }
