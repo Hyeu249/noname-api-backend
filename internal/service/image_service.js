@@ -7,6 +7,7 @@ class ImageService {
   constructor() {}
   static uploadImage = uploadImage;
   static GetImage = GetImage;
+  static DeleteImage = DeleteImage;
 }
 
 module.exports = ImageService;
@@ -57,5 +58,28 @@ async function GetImage(db, image_id) {
 
     log.Error("Finish IMAGE GetImage Service with error", error);
     return [null, parseError];
+  }
+}
+
+async function DeleteImage(db, image_id) {
+  log.Service("Start IMAGE DeleteImage Service");
+  const tx = await db.transaction();
+
+  try {
+    //insert new image
+    const err = await Repo.ImageRepo.DetroyImage(tx, image_id);
+    if (err !== null) {
+      throw new Error(err);
+    }
+
+    await tx.commit();
+    log.Service("Finish IMAGE DeleteImage Service");
+    return null;
+  } catch (error) {
+    await tx.rollback();
+    const parseError = help.ParseErrorMessage(error.message);
+
+    log.Error("Finish IMAGE DeleteImage Service with error", error);
+    return parseError;
   }
 }

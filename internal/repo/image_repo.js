@@ -7,6 +7,7 @@ class ImageRepo {
   constructor() {}
   static InsertNewImage = InsertNewImage;
   static GetImageLocation = GetImageLocation;
+  static DetroyImage = DetroyImage;
 }
 module.exports = ImageRepo;
 
@@ -63,5 +64,30 @@ async function GetImageLocation(tx, image_id) {
   } catch (error) {
     log.Error("Finish IMAGE Repo GetImageLocation with error", error);
     return [null, error];
+  }
+}
+
+async function DetroyImage(tx, image_id) {
+  log.Repo("Start IMAGE Repo DetroyImage");
+
+  try {
+    await Sequelize.Image.destroy(
+      {
+        where: {
+          id: image_id,
+        },
+      },
+      { transaction: tx }
+    )
+      .then(() => {})
+      .catch((error) => {
+        throw new Error(error);
+      });
+
+    log.Repo("Finish IMAGE Repo DetroyImage");
+    return null;
+  } catch (error) {
+    log.Error("Finish IMAGE Repo DetroyImage with error", error);
+    return error;
   }
 }

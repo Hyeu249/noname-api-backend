@@ -21,9 +21,9 @@ function AttachImageServiceHTTPHandler(db, middleware) {
 
   const g = "/images";
 
-  router.post(g + "/upload", Multer.StoreImageToLocal(), uploadImage.bind({ db }));
-  router.get(g + "/download", downloadImage.bind({ db }));
-  router.delete(g + "/delete", deleteImage.bind({ db }));
+  router.post(g + "", Multer.StoreImageToLocal(), uploadImage.bind({ db }));
+  router.get(g + "", downloadImage.bind({ db }));
+  router.delete(g + "/:id", deleteImage.bind({ db }));
   return router;
 }
 
@@ -90,4 +90,33 @@ async function downloadImage(req, res) {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }
 }
-async function deleteImage(req, res) {}
+async function deleteImage(req, res) {
+  const { db } = this;
+
+  try {
+    //validate struct
+    var [body, err] = validator.Bind({ id: req.params.id }, domain.ImageDownloadRequest).ValidateStruct().Parse();
+    if (err !== null) {
+      switch (err) {
+        case domain.MalformedJSONErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.MalformedJSONErrResMsg });
+        case domain.validationFailureErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.validationFailureErrResMsg });
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalErorAtValidation });
+      }
+    }
+    //service
+    var err = await Service.ImageService.DeleteImage(db, body.id);
+    if (err !== null) {
+      switch (err) {
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
+      }
+    }
+
+    return res.status(OK).send({ message: domain.MsgImageDeleteSuccess });
+  } catch (error) {
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
+  }
+}
