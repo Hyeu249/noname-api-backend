@@ -87,7 +87,7 @@ async function login(req, res) {
       }
     }
 
-    return res.status(OK).send({ JWT: token, message: domain.MsgUserLoginSuccess });
+    return res.status(OK).send({ jwt: token, message: domain.MsgUserLoginSuccess });
   } catch (error) {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }
