@@ -75,7 +75,7 @@ async function downloadImage(req, res) {
       }
     }
     //service
-    var [location, err] = await Service.ImageService.GetImage(db, body.id);
+    var [image, err] = await Service.ImageService.GetImage(db, body.id);
     if (err !== null) {
       switch (err) {
         case domain.ImageIsNotFound:
@@ -87,7 +87,7 @@ async function downloadImage(req, res) {
       }
     }
 
-    return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, location: location });
+    return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, image: image });
   } catch (error) {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }

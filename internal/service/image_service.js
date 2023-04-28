@@ -49,17 +49,17 @@ async function GetImage(db, image_id) {
       throw new Error(domain.ImageIsNotFound);
     }
     //get image
-    var [location, err] = await Repo.ImageRepo.GetImageLocation(tx, image_id);
+    var [image, err] = await Repo.ImageRepo.GetImage(tx, image_id);
     if (err !== null) {
       throw new Error(err);
     }
-    if (location === null) {
-      throw new Error(domain.ImageLocationIsNotFound);
+    if (image === null) {
+      throw new Error(domain.ImageIsNotFound);
     }
 
     await tx.commit();
     log.Service("Finish IMAGE GetImage Service");
-    return [location, null];
+    return [image, null];
   } catch (error) {
     await tx.rollback();
     const parseError = help.ParseErrorMessage(error.message);

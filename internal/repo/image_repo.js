@@ -4,7 +4,7 @@ const log = require("@server/lib/log");
 class ImageRepo {
   constructor() {}
   static InsertNewImage = InsertNewImage;
-  static GetImageLocation = GetImageLocation;
+  static GetImage = GetImage;
   static DetroyImage = DetroyImage;
   static IsImageExist = IsImageExist;
 }
@@ -32,25 +32,23 @@ async function InsertNewImage(tx, body) {
   }
 }
 
-async function GetImageLocation(tx, image_id) {
-  log.Repo("Start IMAGE Repo GetImageLocation");
+async function GetImage(tx, image_id) {
+  log.Repo("Start IMAGE Repo GetImage");
 
   try {
     const image = await Sequelize.Image.findOne(
       {
-        attributes: ["location"],
         where: {
           id: image_id,
         },
       },
       { transaction: tx }
     );
-    const { location = null } = image || null;
 
-    log.Repo("Finish IMAGE Repo GetImageLocation");
-    return [location, null];
+    log.Repo("Finish IMAGE Repo GetImage");
+    return [image, null];
   } catch (error) {
-    log.Error("Finish IMAGE Repo GetImageLocation with error", error);
+    log.Error("Finish IMAGE Repo GetImage with error", error);
     return [null, error];
   }
 }
