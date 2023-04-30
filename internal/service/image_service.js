@@ -5,32 +5,56 @@ const help = require("@server/lib/help");
 
 class ImageService {
   constructor() {}
-  static uploadImage = uploadImage;
+  static createPrintingImage = createPrintingImage;
+  static createSampleImage = createSampleImage;
   static GetImage = GetImage;
   static DeleteImage = DeleteImage;
 }
 
 module.exports = ImageService;
 
-async function uploadImage(db, body) {
-  log.Service("Start IMAGE uploadImage Service");
+async function createPrintingImage(db, body) {
+  log.Service("Start IMAGE createPrintingImage Service");
   const tx = await db.transaction();
 
   try {
     //insert new image
-    const err = await Repo.ImageRepo.InsertNewImage(tx, body);
+    const err = await Repo.ImageRepo.InsertNewPrintingImage(tx, body);
     if (err !== null) {
       throw new Error(err);
     }
 
     await tx.commit();
-    log.Service("Finish IMAGE uploadImage Service");
+    log.Service("Finish IMAGE createPrintingImage Service");
     return null;
   } catch (error) {
     await tx.rollback();
     const parseError = help.ParseErrorMessage(error.message);
 
-    log.Error("Finish IMAGE uploadImage Service with error", error);
+    log.Error("Finish IMAGE createPrintingImage Service with error", error);
+    return parseError;
+  }
+}
+
+async function createSampleImage(db, body) {
+  log.Service("Start IMAGE createSampleImage Service");
+  const tx = await db.transaction();
+
+  try {
+    //insert new image
+    const err = await Repo.ImageRepo.InsertNewSampleImage(tx, body);
+    if (err !== null) {
+      throw new Error(err);
+    }
+
+    await tx.commit();
+    log.Service("Finish IMAGE createSampleImage Service");
+    return null;
+  } catch (error) {
+    await tx.rollback();
+    const parseError = help.ParseErrorMessage(error.message);
+
+    log.Error("Finish IMAGE createSampleImage Service with error", error);
     return parseError;
   }
 }

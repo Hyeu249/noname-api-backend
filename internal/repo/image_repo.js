@@ -1,33 +1,59 @@
 const Sequelize = require("@server/lib/sequelize");
+const Image = require("@server/lib/sequelize/image");
+
 const log = require("@server/lib/log");
 
 class ImageRepo {
   constructor() {}
-  static InsertNewImage = InsertNewImage;
+  static InsertNewPrintingImage = InsertNewPrintingImage;
+  static InsertNewSampleImage = InsertNewSampleImage;
   static GetImage = GetImage;
   static DetroyImage = DetroyImage;
   static IsImageExist = IsImageExist;
 }
 module.exports = ImageRepo;
 
-async function InsertNewImage(tx, body) {
-  log.Repo("Start IMAGE Repo InsertNewImage");
-
+async function InsertNewPrintingImage(tx, body) {
+  log.Repo("Start IMAGE Repo InsertNewPrintingImage");
   try {
     const _ = await Sequelize.Image.create(
       {
         name: body.name,
         description: body.description,
+        type: Image.Image_types.PRINTING,
         file_extention: body.file_extention,
         location: body.location,
       },
       { transaction: tx }
     );
 
-    log.Repo("Finish IMAGE Repo InsertNewImage");
+    log.Repo("Finish IMAGE Repo InsertNewPrintingImage");
     return null;
   } catch (error) {
-    log.Error("Finish IMAGE Repo InsertNewImage with error", error);
+    log.Error("Finish IMAGE Repo InsertNewPrintingImage with error", error);
+    return error;
+  }
+}
+
+async function InsertNewSampleImage(tx, body) {
+  log.Repo("Start IMAGE Repo InsertNewSampleImage");
+
+  try {
+    const _ = await Sequelize.Image.create(
+      {
+        name: body.name,
+        description: body.description,
+        type: Image.Image_types.SAMPLE,
+        file_extention: body.file_extention,
+        location: body.location,
+      },
+      { transaction: tx }
+    );
+
+    log.Repo("Finish IMAGE Repo InsertNewSampleImage");
+    return null;
+  } catch (error) {
+    log.Error("Finish IMAGE Repo InsertNewSampleImage with error", error);
     return error;
   }
 }

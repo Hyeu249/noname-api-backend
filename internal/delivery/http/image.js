@@ -21,13 +21,16 @@ function AttachImageServiceHTTPHandler(db, middleware) {
 
   const g = "/images";
 
-  router.post(g + "", Multer.StoreImageToLocal(), uploadImage.bind({ db }));
   router.get(g + "/:id", downloadImage.bind({ db }));
   router.delete(g + "/:id", deleteImage.bind({ db }));
+  //
+  router.post(g + "/printing", Multer.StoreImageToLocal(), createPrintingImage.bind({ db }));
+  router.post(g + "/sample", Multer.StoreImageToLocal(), createSampleImage.bind({ db }));
+
   return router;
 }
 
-async function uploadImage(req, res) {
+async function createPrintingImage(req, res) {
   const { db } = this;
 
   try {
@@ -44,7 +47,38 @@ async function uploadImage(req, res) {
       }
     }
     //service
-    var err = await Service.ImageService.uploadImage(db, body);
+    var err = await Service.ImageService.createPrintingImage(db, body);
+    if (err !== null) {
+      switch (err) {
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
+      }
+    }
+
+    return res.status(OK).send({ message: domain.MsgImageUploadSuccess });
+  } catch (error) {
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
+  }
+}
+
+async function createSampleImage(req, res) {
+  const { db } = this;
+
+  try {
+    //validate struct
+    var [body, err] = validator.Bind(req.body, domain.ImageUploadRequest).ValidateStruct().Parse();
+    if (err !== null) {
+      switch (err) {
+        case domain.MalformedJSONErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.MalformedJSONErrResMsg });
+        case domain.validationFailureErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.validationFailureErrResMsg });
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalErorAtValidation });
+      }
+    }
+    //service
+    var err = await Service.ImageService.createSampleImage(db, body);
     if (err !== null) {
       switch (err) {
         default:
