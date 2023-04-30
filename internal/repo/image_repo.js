@@ -13,7 +13,7 @@ class ImageRepo {
 }
 module.exports = ImageRepo;
 
-async function InsertNewPrintingImage(tx, body) {
+async function InsertNewPrintingImage(tx, body, user_id) {
   log.Repo("Start IMAGE Repo InsertNewPrintingImage");
   try {
     const _ = await Sequelize.Image.create(
@@ -23,6 +23,7 @@ async function InsertNewPrintingImage(tx, body) {
         type: Image.Image_types.PRINTING,
         file_extention: body.file_extention,
         location: body.location,
+        UserId: user_id,
       },
       { transaction: tx }
     );
@@ -35,7 +36,7 @@ async function InsertNewPrintingImage(tx, body) {
   }
 }
 
-async function InsertNewSampleImage(tx, body) {
+async function InsertNewSampleImage(tx, body, user_id) {
   log.Repo("Start IMAGE Repo InsertNewSampleImage");
 
   try {
@@ -46,6 +47,7 @@ async function InsertNewSampleImage(tx, body) {
         type: Image.Image_types.SAMPLE,
         file_extention: body.file_extention,
         location: body.location,
+        UserId: user_id,
       },
       { transaction: tx }
     );

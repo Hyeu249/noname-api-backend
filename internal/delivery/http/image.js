@@ -24,8 +24,8 @@ function AttachImageServiceHTTPHandler(db, middleware) {
   router.get(g + "/:id", downloadImage.bind({ db }));
   router.delete(g + "/:id", deleteImage.bind({ db }));
   //
-  router.post(g + "/printing", Multer.StoreImageToLocal(), createPrintingImage.bind({ db }));
-  router.post(g + "/sample", Multer.StoreImageToLocal(), createSampleImage.bind({ db }));
+  router.post(g + "/printing", ...middleware, Multer.StoreImageToLocal(), createPrintingImage.bind({ db }));
+  router.post(g + "/sample", ...middleware, Multer.StoreImageToLocal(), createSampleImage.bind({ db }));
 
   return router;
 }
@@ -47,7 +47,7 @@ async function createPrintingImage(req, res) {
       }
     }
     //service
-    var err = await Service.ImageService.createPrintingImage(db, body);
+    var err = await Service.ImageService.createPrintingImage(db, body, req.user_id);
     if (err !== null) {
       switch (err) {
         default:
@@ -78,7 +78,7 @@ async function createSampleImage(req, res) {
       }
     }
     //service
-    var err = await Service.ImageService.createSampleImage(db, body);
+    var err = await Service.ImageService.createSampleImage(db, body, req.user_id);
     if (err !== null) {
       switch (err) {
         default:

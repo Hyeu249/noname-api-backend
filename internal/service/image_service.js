@@ -13,13 +13,13 @@ class ImageService {
 
 module.exports = ImageService;
 
-async function createPrintingImage(db, body) {
+async function createPrintingImage(db, body, user_id) {
   log.Service("Start IMAGE createPrintingImage Service");
   const tx = await db.transaction();
 
   try {
     //insert new image
-    const err = await Repo.ImageRepo.InsertNewPrintingImage(tx, body);
+    const err = await Repo.ImageRepo.InsertNewPrintingImage(tx, body, user_id);
     if (err !== null) {
       throw new Error(err);
     }
@@ -36,13 +36,13 @@ async function createPrintingImage(db, body) {
   }
 }
 
-async function createSampleImage(db, body) {
+async function createSampleImage(db, body, user_id) {
   log.Service("Start IMAGE createSampleImage Service");
   const tx = await db.transaction();
 
   try {
     //insert new image
-    const err = await Repo.ImageRepo.InsertNewSampleImage(tx, body);
+    const err = await Repo.ImageRepo.InsertNewSampleImage(tx, body, user_id);
     if (err !== null) {
       throw new Error(err);
     }
