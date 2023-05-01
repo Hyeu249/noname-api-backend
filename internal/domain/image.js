@@ -41,10 +41,6 @@ const ImageUpdateRequest = {
     type: dataTypes.STRING,
     validate: [],
   },
-  type: {
-    type: dataTypes.STRING,
-    validate: [],
-  },
 };
 
 const ImageListRequest = {
@@ -65,6 +61,10 @@ const ImageListRequest = {
     validate: [],
   },
   description: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+  type: {
     type: dataTypes.STRING,
     validate: [],
   },
