@@ -25,7 +25,7 @@ async function InsertNewPrintingImage(tx, body, user_id) {
         type: Image.Image_types.PRINTING,
         file_extention: body.file_extention,
         location: body.location,
-        UserId: user_id,
+        user_id: user_id,
       },
       { transaction: tx }
     );
@@ -49,7 +49,7 @@ async function InsertNewSampleImage(tx, body, user_id) {
         type: Image.Image_types.SAMPLE,
         file_extention: body.file_extention,
         location: body.location,
-        UserId: user_id,
+        user_id: user_id,
       },
       { transaction: tx }
     );
