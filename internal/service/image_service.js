@@ -5,16 +5,17 @@ const help = require("@server/lib/help");
 
 class ImageService {
   constructor() {}
-  static createPrintingImage = createPrintingImage;
-  static createSampleImage = createSampleImage;
+  static CreatePrintingImage = CreatePrintingImage;
+  static CreateSampleImage = CreateSampleImage;
+  static UpdateImage = UpdateImage;
   static GetImage = GetImage;
   static DeleteImage = DeleteImage;
 }
 
 module.exports = ImageService;
 
-async function createPrintingImage(db, body, user_id) {
-  log.Service("Start IMAGE createPrintingImage Service");
+async function CreatePrintingImage(db, body, user_id) {
+  log.Service("Start IMAGE CreatePrintingImage Service");
   const tx = await db.transaction();
 
   try {
@@ -25,19 +26,19 @@ async function createPrintingImage(db, body, user_id) {
     }
 
     await tx.commit();
-    log.Service("Finish IMAGE createPrintingImage Service");
+    log.Service("Finish IMAGE CreatePrintingImage Service");
     return null;
   } catch (error) {
     await tx.rollback();
     const parseError = help.ParseErrorMessage(error.message);
 
-    log.Error("Finish IMAGE createPrintingImage Service with error", error);
+    log.Error("Finish IMAGE CreatePrintingImage Service with error", error);
     return parseError;
   }
 }
 
-async function createSampleImage(db, body, user_id) {
-  log.Service("Start IMAGE createSampleImage Service");
+async function CreateSampleImage(db, body, user_id) {
+  log.Service("Start IMAGE CreateSampleImage Service");
   const tx = await db.transaction();
 
   try {
@@ -48,13 +49,51 @@ async function createSampleImage(db, body, user_id) {
     }
 
     await tx.commit();
-    log.Service("Finish IMAGE createSampleImage Service");
+    log.Service("Finish IMAGE CreateSampleImage Service");
     return null;
   } catch (error) {
     await tx.rollback();
     const parseError = help.ParseErrorMessage(error.message);
 
-    log.Error("Finish IMAGE createSampleImage Service with error", error);
+    log.Error("Finish IMAGE CreateSampleImage Service with error", error);
+    return parseError;
+  }
+}
+
+async function UpdateImage(db, body, user_id) {
+  log.Service("Start IMAGE UpdateImage Service");
+  const tx = await db.transaction();
+
+  try {
+    var [isImageExist, err] = await Repo.ImageRepo.IsImageExist(tx, body.image_id);
+    if (err !== null) {
+      throw new Error(err);
+    }
+    if (!isImageExist) {
+      throw new Error(domain.ImageIsNotFound);
+    }
+    var [isThisUserOwned, err] = await Repo.ImageRepo.IsThisUserOwned(tx, body.image_id, user_id);
+    if (err !== null) {
+      throw new Error(err);
+    }
+    if (!isThisUserOwned) {
+      throw new Error(domain.ThisUserIsNotTheOwner);
+    }
+
+    //insert new image
+    var err = await Repo.ImageRepo.UpdateImage(tx, body);
+    if (err !== null) {
+      throw new Error(err);
+    }
+
+    await tx.commit();
+    log.Service("Finish IMAGE UpdateImage Service");
+    return null;
+  } catch (error) {
+    await tx.rollback();
+    const parseError = help.ParseErrorMessage(error.message);
+
+    log.Error("Finish IMAGE UpdateImage Service with error", error);
     return parseError;
   }
 }

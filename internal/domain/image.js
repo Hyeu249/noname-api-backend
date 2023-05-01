@@ -2,11 +2,13 @@ const dataTypes = require("@server/lib/dataTypes");
 
 const Var = {
   MsgImageUploadSuccess: "Upload image successfully.",
+  MsgImageUpdateSuccess: "Update image successfully.",
   MsgImageDownloadSuccess: "Download image successfully.",
   MsgImageDeleteSuccess: "Delete image successfully.",
 
   ImageLocationIsNotFound: "Image location is not found.",
   ImageIsNotFound: "Image is not found.",
+  ThisUserIsNotTheOwner: "This user is not the owner.",
 };
 
 const ImageUploadRequest = {
@@ -29,6 +31,22 @@ const ImageUploadRequest = {
   },
 };
 
+const ImageUpdateRequest = {
+  image_id: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+  name: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+
+  description: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+};
+
 const ImageDownloadRequest = {
   id: { type: dataTypes.STRING, validate: ["required"] },
 };
@@ -37,4 +55,4 @@ const ImageDeleteRequest = {
   id: { type: dataTypes.STRING, validate: ["required"] },
 };
 
-module.exports = { ...Var, ImageUploadRequest, ImageDownloadRequest, ImageDeleteRequest };
+module.exports = { ...Var, ImageUploadRequest, ImageUpdateRequest, ImageDownloadRequest, ImageDeleteRequest };

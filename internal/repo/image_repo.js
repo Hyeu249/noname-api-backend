@@ -7,9 +7,11 @@ class ImageRepo {
   constructor() {}
   static InsertNewPrintingImage = InsertNewPrintingImage;
   static InsertNewSampleImage = InsertNewSampleImage;
+  static UpdateImage = UpdateImage;
   static GetImage = GetImage;
   static DetroyImage = DetroyImage;
   static IsImageExist = IsImageExist;
+  static IsThisUserOwned = IsThisUserOwned;
 }
 module.exports = ImageRepo;
 
@@ -56,6 +58,23 @@ async function InsertNewSampleImage(tx, body, user_id) {
     return null;
   } catch (error) {
     log.Error("Finish IMAGE Repo InsertNewSampleImage with error", error);
+    return error;
+  }
+}
+
+async function UpdateImage(tx, body) {
+  log.Repo("Start IMAGE Repo UpdateImage");
+  try {
+    const data = {};
+    if (body.name !== undefined) data.name = body.name;
+    if (body.description !== undefined) data.description = body.description;
+
+    const _ = await Sequelize.Image.update(data, { where: { id: body.image_id }, transaction: tx });
+
+    log.Repo("Finish IMAGE Repo UpdateImage");
+    return null;
+  } catch (error) {
+    log.Error("Finish IMAGE Repo UpdateImage with error", error);
     return error;
   }
 }
@@ -119,6 +138,28 @@ async function IsImageExist(tx, image_id) {
     return [count > 0, null];
   } catch (error) {
     log.Error("Finish IMAGE Repo IsImageExist with error", error);
+    return [null, error];
+  }
+}
+
+async function IsThisUserOwned(tx, image_id, user_id) {
+  log.Repo("Start IMAGE Repo IsThisUserOwned");
+
+  try {
+    const count = await Sequelize.Image.count(
+      {
+        where: {
+          id: image_id,
+          user_id: user_id,
+        },
+      },
+      { transaction: tx }
+    );
+
+    log.Repo("Finish IMAGE Repo IsThisUserOwned");
+    return [count > 0, null];
+  } catch (error) {
+    log.Error("Finish IMAGE Repo IsThisUserOwned with error", error);
     return [null, error];
   }
 }

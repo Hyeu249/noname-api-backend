@@ -26,6 +26,7 @@ function AttachImageServiceHTTPHandler(db, middleware) {
   //
   router.post(g + "/printing", ...middleware, Multer.StoreImageToLocal(), createPrintingImage.bind({ db }));
   router.post(g + "/sample", ...middleware, Multer.StoreImageToLocal(), createSampleImage.bind({ db }));
+  router.patch(g + "/edit", ...middleware, updateImage.bind({ db }));
 
   return router;
 }
@@ -47,7 +48,7 @@ async function createPrintingImage(req, res) {
       }
     }
     //service
-    var err = await Service.ImageService.createPrintingImage(db, body, req.user_id);
+    var err = await Service.ImageService.CreatePrintingImage(db, body, req.user_id);
     if (err !== null) {
       switch (err) {
         default:
@@ -78,7 +79,7 @@ async function createSampleImage(req, res) {
       }
     }
     //service
-    var err = await Service.ImageService.createSampleImage(db, body, req.user_id);
+    var err = await Service.ImageService.CreateSampleImage(db, body, req.user_id);
     if (err !== null) {
       switch (err) {
         default:
@@ -122,6 +123,44 @@ async function downloadImage(req, res) {
     }
 
     return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, image: image });
+  } catch (error) {
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
+  }
+}
+
+async function updateImage(req, res) {
+  const { db } = this;
+
+  try {
+    const { name, description } = req.body;
+    const image_id = req.query.id;
+
+    //validate struct
+    var [body, err] = validator.Bind({ name, description, image_id }, domain.ImageUpdateRequest).ValidateStruct().Parse();
+    if (err !== null) {
+      switch (err) {
+        case domain.MalformedJSONErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.MalformedJSONErrResMsg });
+        case domain.validationFailureErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.validationFailureErrResMsg });
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalErorAtValidation });
+      }
+    }
+    //service
+    var err = await Service.ImageService.UpdateImage(db, body, req.user_id);
+    if (err !== null) {
+      switch (err) {
+        case domain.ImageIsNotFound:
+          return res.status(NOT_FOUND).send({ message: domain.ImageIsNotFound });
+        case domain.ThisUserIsNotTheOwner:
+          return res.status(BAD_REQUEST).send({ message: domain.ThisUserIsNotTheOwner });
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
+      }
+    }
+
+    return res.status(OK).send({ message: domain.MsgImageUpdateSuccess });
   } catch (error) {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }
