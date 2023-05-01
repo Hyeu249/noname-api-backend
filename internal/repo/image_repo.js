@@ -88,6 +88,7 @@ async function GetImageList(tx, body) {
   if (body.image_id !== undefined) conditions.id = body.image_id;
   if (body.name !== undefined) conditions.name = body.name;
   if (body.description !== undefined) conditions.description = body.description;
+  if (body.type !== undefined) conditions.type = body.type;
   if (body.offset !== undefined) offset = body.offset;
   if (body.limit !== undefined) limit = body.limit;
 
