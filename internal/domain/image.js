@@ -47,12 +47,31 @@ const ImageUpdateRequest = {
   },
 };
 
-const ImageDownloadRequest = {
-  id: { type: dataTypes.STRING, validate: ["required"] },
+const ImageListRequest = {
+  image_id: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+  offset: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+  limit: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+  name: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+  description: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
 };
 
 const ImageDeleteRequest = {
   id: { type: dataTypes.STRING, validate: ["required"] },
 };
 
-module.exports = { ...Var, ImageUploadRequest, ImageUpdateRequest, ImageDownloadRequest, ImageDeleteRequest };
+module.exports = { ...Var, ImageUploadRequest, ImageUpdateRequest, ImageListRequest, ImageDeleteRequest };

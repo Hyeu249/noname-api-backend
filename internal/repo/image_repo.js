@@ -8,7 +8,7 @@ class ImageRepo {
   static InsertNewPrintingImage = InsertNewPrintingImage;
   static InsertNewSampleImage = InsertNewSampleImage;
   static UpdateImage = UpdateImage;
-  static GetImage = GetImage;
+  static GetImageList = GetImageList;
   static DetroyImage = DetroyImage;
   static IsImageExist = IsImageExist;
   static IsThisUserOwned = IsThisUserOwned;
@@ -79,23 +79,32 @@ async function UpdateImage(tx, body) {
   }
 }
 
-async function GetImage(tx, image_id) {
-  log.Repo("Start IMAGE Repo GetImage");
+async function GetImageList(tx, body) {
+  log.Repo("Start IMAGE Repo GetImageList");
+  let offset = 0;
+  let limit = 20;
+
+  const conditions = {};
+  if (body.image_id !== undefined) conditions.id = body.image_id;
+  if (body.name !== undefined) conditions.name = body.name;
+  if (body.description !== undefined) conditions.description = body.description;
+  if (body.offset !== undefined) offset = body.offset;
+  if (body.limit !== undefined) limit = body.limit;
 
   try {
-    const image = await Sequelize.Image.findOne(
+    const images = await Sequelize.Image.findAndCountAll(
       {
-        where: {
-          id: image_id,
-        },
+        where: conditions,
+        offset: Number(offset),
+        limit: Number(limit),
       },
       { transaction: tx }
     );
 
-    log.Repo("Finish IMAGE Repo GetImage");
-    return [image, null];
+    log.Repo("Finish IMAGE Repo GetImageList");
+    return [images, null];
   } catch (error) {
-    log.Error("Finish IMAGE Repo GetImage with error", error);
+    log.Error("Finish IMAGE Repo GetImageList with error", error);
     return [null, error];
   }
 }

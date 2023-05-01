@@ -21,7 +21,7 @@ function AttachImageServiceHTTPHandler(db, middleware) {
 
   const g = "/images";
 
-  router.get(g + "/:id", downloadImage.bind({ db }));
+  router.get(g + "", getImageList.bind({ db }));
   router.delete(g + "/:id", ...middleware, deleteImage.bind({ db }));
   //
   router.post(g + "/printing", ...middleware, Multer.StoreImageToLocal(), createPrintingImage.bind({ db }));
@@ -93,12 +93,12 @@ async function createSampleImage(req, res) {
   }
 }
 
-async function downloadImage(req, res) {
+async function getImageList(req, res) {
   const { db } = this;
 
   try {
     //validate struct
-    var [body, err] = validator.Bind({ id: req.params.id }, domain.ImageDownloadRequest).ValidateStruct().Parse();
+    var [body, err] = validator.Bind(req.query, domain.ImageListRequest).ValidateStruct().Parse();
     if (err !== null) {
       switch (err) {
         case domain.MalformedJSONErrResMsg:
@@ -110,19 +110,17 @@ async function downloadImage(req, res) {
       }
     }
     //service
-    var [image, err] = await Service.ImageService.GetImage(db, body.id);
+    var [images, err] = await Service.ImageService.GetImageList(db, body);
     if (err !== null) {
       switch (err) {
         case domain.ImageIsNotFound:
           return res.status(NOT_FOUND).send({ message: domain.ImageIsNotFound });
-        case domain.ImageLocationIsNotFound:
-          return res.status(NOT_FOUND).send({ message: domain.ImageLocationIsNotFound });
         default:
           return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
       }
     }
 
-    return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, image: image });
+    return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, result: images });
   } catch (error) {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }
