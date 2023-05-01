@@ -22,11 +22,10 @@ function AttachImageServiceHTTPHandler(db, middleware) {
   const g = "/images";
 
   router.get(g + "", getImageList.bind({ db }));
-  router.delete(g + "/:id", ...middleware, deleteImage.bind({ db }));
-  //
   router.post(g + "/printing", ...middleware, Multer.StoreImageToLocal(), createPrintingImage.bind({ db }));
   router.post(g + "/sample", ...middleware, Multer.StoreImageToLocal(), createSampleImage.bind({ db }));
-  router.patch(g + "/edit", ...middleware, updateImage.bind({ db }));
+  router.patch(g + "/:id", ...middleware, updateImage.bind({ db }));
+  router.delete(g + "/:id", ...middleware, deleteImage.bind({ db }));
 
   return router;
 }
@@ -130,11 +129,10 @@ async function updateImage(req, res) {
   const { db } = this;
 
   try {
-    const { name, description } = req.body;
-    const image_id = req.query.id;
+    const image_id = req.params.id;
 
     //validate struct
-    var [body, err] = validator.Bind({ name, description, image_id }, domain.ImageUpdateRequest).ValidateStruct().Parse();
+    var [body, err] = validator.Bind(req.body, domain.ImageUpdateRequest).ValidateStruct().Parse();
     if (err !== null) {
       switch (err) {
         case domain.MalformedJSONErrResMsg:
@@ -146,7 +144,7 @@ async function updateImage(req, res) {
       }
     }
     //service
-    var err = await Service.ImageService.UpdateImage(db, body, req.user_id);
+    var err = await Service.ImageService.UpdateImage(db, body, image_id, req.user_id);
     if (err !== null) {
       switch (err) {
         case domain.ImageIsNotFound:
@@ -169,7 +167,7 @@ async function deleteImage(req, res) {
 
   try {
     //validate struct
-    var [body, err] = validator.Bind({ id: req.params.id }, domain.ImageDownloadRequest).ValidateStruct().Parse();
+    var [body, err] = validator.Bind(req.params, domain.ImageDownloadRequest).ValidateStruct().Parse();
     if (err !== null) {
       switch (err) {
         case domain.MalformedJSONErrResMsg:

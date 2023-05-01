@@ -32,10 +32,6 @@ const ImageUploadRequest = {
 };
 
 const ImageUpdateRequest = {
-  image_id: {
-    type: dataTypes.STRING,
-    validate: [],
-  },
   name: {
     type: dataTypes.STRING,
     validate: [],

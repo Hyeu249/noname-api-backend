@@ -62,14 +62,14 @@ async function InsertNewSampleImage(tx, body, user_id) {
   }
 }
 
-async function UpdateImage(tx, body) {
+async function UpdateImage(tx, body, image_id) {
   log.Repo("Start IMAGE Repo UpdateImage");
   try {
     const data = {};
     if (body.name !== undefined) data.name = body.name;
     if (body.description !== undefined) data.description = body.description;
 
-    const _ = await Sequelize.Image.update(data, { where: { id: body.image_id }, transaction: tx });
+    const _ = await Sequelize.Image.update(data, { where: { id: image_id }, transaction: tx });
 
     log.Repo("Finish IMAGE Repo UpdateImage");
     return null;

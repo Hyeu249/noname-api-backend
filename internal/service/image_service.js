@@ -60,19 +60,19 @@ async function CreateSampleImage(db, body, user_id) {
   }
 }
 
-async function UpdateImage(db, body, user_id) {
+async function UpdateImage(db, body, image_id, user_id) {
   log.Service("Start IMAGE UpdateImage Service");
   const tx = await db.transaction();
 
   try {
-    var [isImageExist, err] = await Repo.ImageRepo.IsImageExist(tx, body.image_id);
+    var [isImageExist, err] = await Repo.ImageRepo.IsImageExist(tx, image_id);
     if (err !== null) {
       throw new Error(err);
     }
     if (!isImageExist) {
       throw new Error(domain.ImageIsNotFound);
     }
-    var [isThisUserOwned, err] = await Repo.ImageRepo.IsThisUserOwned(tx, body.image_id, user_id);
+    var [isThisUserOwned, err] = await Repo.ImageRepo.IsThisUserOwned(tx, image_id, user_id);
     if (err !== null) {
       throw new Error(err);
     }
@@ -81,7 +81,7 @@ async function UpdateImage(db, body, user_id) {
     }
 
     //insert new image
-    var err = await Repo.ImageRepo.UpdateImage(tx, body);
+    var err = await Repo.ImageRepo.UpdateImage(tx, body, image_id);
     if (err !== null) {
       throw new Error(err);
     }
