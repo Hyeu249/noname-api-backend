@@ -22,7 +22,7 @@ function AttachImageServiceHTTPHandler(db, middleware) {
   const g = "/images";
 
   router.get(g + "/:id", downloadImage.bind({ db }));
-  router.delete(g + "/:id", deleteImage.bind({ db }));
+  router.delete(g + "/:id", ...middleware, deleteImage.bind({ db }));
   //
   router.post(g + "/printing", ...middleware, Multer.StoreImageToLocal(), createPrintingImage.bind({ db }));
   router.post(g + "/sample", ...middleware, Multer.StoreImageToLocal(), createSampleImage.bind({ db }));
@@ -183,11 +183,13 @@ async function deleteImage(req, res) {
       }
     }
     //service
-    var err = await Service.ImageService.DeleteImage(db, body.id);
+    var err = await Service.ImageService.DeleteImage(db, body.id, req.user_id);
     if (err !== null) {
       switch (err) {
         case domain.ImageIsNotFound:
           return res.status(NOT_FOUND).send({ message: domain.ImageIsNotFound });
+        case domain.ThisUserIsNotTheOwner:
+          return res.status(BAD_REQUEST).send({ message: domain.ThisUserIsNotTheOwner });
         default:
           return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
       }

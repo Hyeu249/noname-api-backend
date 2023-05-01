@@ -132,7 +132,7 @@ async function GetImage(db, image_id) {
   }
 }
 
-async function DeleteImage(db, image_id) {
+async function DeleteImage(db, image_id, user_id) {
   log.Service("Start IMAGE DeleteImage Service");
   const tx = await db.transaction();
 
@@ -145,6 +145,15 @@ async function DeleteImage(db, image_id) {
     if (!isImageExist) {
       throw new Error(domain.ImageIsNotFound);
     }
+
+    var [isThisUserOwned, err] = await Repo.ImageRepo.IsThisUserOwned(tx, image_id, user_id);
+    if (err !== null) {
+      throw new Error(err);
+    }
+    if (!isThisUserOwned) {
+      throw new Error(domain.ThisUserIsNotTheOwner);
+    }
+
     //detroy new image
     var err = await Repo.ImageRepo.DetroyImage(tx, image_id);
     if (err !== null) {
