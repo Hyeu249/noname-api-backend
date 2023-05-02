@@ -167,7 +167,7 @@ async function deleteImage(req, res) {
 
   try {
     //validate struct
-    var [body, err] = validator.Bind(req.params, domain.ImageDownloadRequest).ValidateStruct().Parse();
+    var [body, err] = validator.Bind(req.params, domain.ImageDeleteRequest).ValidateStruct().Parse();
     if (err !== null) {
       switch (err) {
         case domain.MalformedJSONErrResMsg:
