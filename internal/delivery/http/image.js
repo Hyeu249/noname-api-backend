@@ -21,7 +21,7 @@ function AttachImageServiceHTTPHandler(db, middleware) {
 
   const g = "/images";
 
-  router.get(g + "", getImageList.bind({ db }));
+  router.get(g + "", ...middleware, getImageList.bind({ db }));
   router.post(g + "/printing", ...middleware, Multer.StoreImageToLocal(), createPrintingImage.bind({ db }));
   router.post(g + "/sample", ...middleware, Multer.StoreImageToLocal(), createSampleImage.bind({ db }));
   router.patch(g + "/:id", ...middleware, updateImage.bind({ db }));
@@ -109,7 +109,7 @@ async function getImageList(req, res) {
       }
     }
     //service
-    var [images, err] = await Service.ImageService.GetImageList(db, body);
+    var [images, err] = await Service.ImageService.GetImageList(db, body, req.user_id);
     if (err !== null) {
       switch (err) {
         case domain.ImageIsNotFound:

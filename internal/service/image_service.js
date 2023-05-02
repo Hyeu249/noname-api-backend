@@ -98,7 +98,7 @@ async function UpdateImage(db, body, image_id, user_id) {
   }
 }
 
-async function GetImageList(db, body) {
+async function GetImageList(db, body, user_id) {
   log.Service("Start IMAGE GetImageList Service");
   const tx = await db.transaction();
 
@@ -115,7 +115,7 @@ async function GetImageList(db, body) {
     }
 
     //get images
-    var [images, err] = await Repo.ImageRepo.GetImageList(tx, body);
+    var [images, err] = await Repo.ImageRepo.GetImageList(tx, body, user_id);
     if (err !== null) {
       throw new Error(err);
     }
