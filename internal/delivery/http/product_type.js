@@ -4,38 +4,36 @@ const { StatusCodes } = require("http-status-codes");
 const Service = require("@server/internal/service");
 const domain = require("@server/internal/domain");
 const validator = require("@server/lib/validator");
-const Multer = require("@server/lib/multer");
 
 const { OK, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = StatusCodes;
 
 class User {
   constructor() {}
-  static AttachImageServiceHTTPHandler = AttachImageServiceHTTPHandler;
+  static AttachProductTypeServiceHTTPHandler = AttachProductTypeServiceHTTPHandler;
 }
 
 // module.exports = router;
 module.exports = User;
 
-function AttachImageServiceHTTPHandler(db) {
+function AttachProductTypeServiceHTTPHandler(db) {
   const router = new express.Router();
 
-  const g = "/images";
+  const g = "/product-types";
 
-  router.get(g + "", getImageList.bind({ db }));
-  router.post(g + "/printing", Multer.StoreImageToLocal(), createPrintingImage.bind({ db }));
-  router.post(g + "/sample", Multer.StoreImageToLocal(), createSampleImage.bind({ db }));
-  router.patch(g + "/:id", updateImage.bind({ db }));
-  router.delete(g + "/:id", deleteImage.bind({ db }));
+  router.get(g + "", getProductTypeList.bind({ db }));
+  router.post(g + "", createProductType.bind({ db }));
+  router.patch(g + "/:id", updateProductType.bind({ db }));
+  router.delete(g + "/:id", deleteProductType.bind({ db }));
 
   return router;
 }
 
-async function createPrintingImage(req, res) {
+async function createProductType(req, res) {
   const { db } = this;
 
   try {
     //validate struct
-    var [body, err] = validator.Bind(req.body, domain.ImageUploadRequest).ValidateStruct().Parse();
+    var [body, err] = validator.Bind(req.body, domain.ProductTypeCreateRequest).ValidateStruct().Parse();
     if (err !== null) {
       switch (err) {
         case domain.MalformedJSONErrResMsg:
@@ -47,92 +45,30 @@ async function createPrintingImage(req, res) {
       }
     }
     //service
-    var err = await Service.ImageService.CreatePrintingImage(db, body, req.user_id);
-    if (err !== null) {
-      switch (err) {
-        default:
-          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
-      }
-    }
-
-    return res.status(OK).send({ message: domain.MsgImageUploadSuccess });
-  } catch (error) {
-    return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
-  }
-}
-
-async function createSampleImage(req, res) {
-  const { db } = this;
-
-  try {
-    //validate struct
-    var [body, err] = validator.Bind(req.body, domain.ImageUploadRequest).ValidateStruct().Parse();
-    if (err !== null) {
-      switch (err) {
-        case domain.MalformedJSONErrResMsg:
-          return res.status(BAD_REQUEST).send({ message: domain.MalformedJSONErrResMsg });
-        case domain.validationFailureErrResMsg:
-          return res.status(BAD_REQUEST).send({ message: domain.validationFailureErrResMsg });
-        default:
-          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalErorAtValidation });
-      }
-    }
-    //service
-    var err = await Service.ImageService.CreateSampleImage(db, body, req.user_id);
-    if (err !== null) {
-      switch (err) {
-        default:
-          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
-      }
-    }
-
-    return res.status(OK).send({ message: domain.MsgImageUploadSuccess });
-  } catch (error) {
-    return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
-  }
-}
-
-async function getImageList(req, res) {
-  const { db } = this;
-
-  try {
-    //validate struct
-    var [body, err] = validator.Bind(req.query, domain.ImageListRequest).ValidateStruct().Parse();
-    if (err !== null) {
-      switch (err) {
-        case domain.MalformedJSONErrResMsg:
-          return res.status(BAD_REQUEST).send({ message: domain.MalformedJSONErrResMsg });
-        case domain.validationFailureErrResMsg:
-          return res.status(BAD_REQUEST).send({ message: domain.validationFailureErrResMsg });
-        default:
-          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalErorAtValidation });
-      }
-    }
-    //service
-    var [images, err] = await Service.ImageService.GetImageList(db, body, req.user_id);
+    var err = await Service.ProductTypeService.CreateProductType(db, body);
     if (err !== null) {
       switch (err) {
         case domain.ImageIsNotFound:
           return res.status(NOT_FOUND).send({ message: domain.ImageIsNotFound });
+        case domain.ThisIsNotSampleImage:
+          return res.status(BAD_REQUEST).send({ message: domain.ThisIsNotSampleImage });
         default:
           return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
       }
     }
 
-    return res.status(OK).send({ message: domain.MsgImageDownloadSuccess, result: images });
+    return res.status(OK).send({ message: domain.MsgProductTypeCreateSuccess });
   } catch (error) {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }
 }
 
-async function updateImage(req, res) {
+async function getProductTypeList(req, res) {
   const { db } = this;
 
   try {
-    const image_id = req.params.id;
-
     //validate struct
-    var [body, err] = validator.Bind(req.body, domain.ImageUpdateRequest).ValidateStruct().Parse();
+    var [body, err] = validator.Bind(req.query, domain.ProductTypeListRequest).ValidateStruct().Parse();
     if (err !== null) {
       switch (err) {
         case domain.MalformedJSONErrResMsg:
@@ -144,30 +80,34 @@ async function updateImage(req, res) {
       }
     }
     //service
-    var err = await Service.ImageService.UpdateImage(db, body, image_id, req.user_id);
+    var [productTypes, err] = await Service.ProductTypeService.GetProductTypeList(db, body);
     if (err !== null) {
       switch (err) {
+        case domain.ProductTypeIsNotFound:
+          return res.status(NOT_FOUND).send({ message: domain.ProductTypeIsNotFound });
         case domain.ImageIsNotFound:
           return res.status(NOT_FOUND).send({ message: domain.ImageIsNotFound });
-        case domain.ThisUserIsNotTheOwner:
-          return res.status(BAD_REQUEST).send({ message: domain.ThisUserIsNotTheOwner });
+        case domain.ThisIsNotSampleImage:
+          return res.status(BAD_REQUEST).send({ message: domain.ThisIsNotSampleImage });
         default:
           return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
       }
     }
 
-    return res.status(OK).send({ message: domain.MsgImageUpdateSuccess });
+    return res.status(OK).send({ message: domain.MsgProductTypeGetListSuccess, result: productTypes });
   } catch (error) {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }
 }
 
-async function deleteImage(req, res) {
+async function updateProductType(req, res) {
   const { db } = this;
 
   try {
+    const product_type_id = req.params.id;
+
     //validate struct
-    var [body, err] = validator.Bind(req.params, domain.ImageDeleteRequest).ValidateStruct().Parse();
+    var [body, err] = validator.Bind(req.body, domain.ProductTypeUpdateRequest).ValidateStruct().Parse();
     if (err !== null) {
       switch (err) {
         case domain.MalformedJSONErrResMsg:
@@ -179,19 +119,54 @@ async function deleteImage(req, res) {
       }
     }
     //service
-    var err = await Service.ImageService.DeleteImage(db, body.id, req.user_id);
+    var err = await Service.ProductTypeService.UpdateProductType(db, body, product_type_id);
     if (err !== null) {
       switch (err) {
+        case domain.ProductTypeIsNotFound:
+          return res.status(NOT_FOUND).send({ message: domain.ProductTypeIsNotFound });
         case domain.ImageIsNotFound:
           return res.status(NOT_FOUND).send({ message: domain.ImageIsNotFound });
-        case domain.ThisUserIsNotTheOwner:
-          return res.status(BAD_REQUEST).send({ message: domain.ThisUserIsNotTheOwner });
+        case domain.ThisIsNotSampleImage:
+          return res.status(BAD_REQUEST).send({ message: domain.ThisIsNotSampleImage });
         default:
           return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
       }
     }
 
-    return res.status(OK).send({ message: domain.MsgImageDeleteSuccess });
+    return res.status(OK).send({ message: domain.MsgProductTypeUpdateSuccess });
+  } catch (error) {
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
+  }
+}
+
+async function deleteProductType(req, res) {
+  const { db } = this;
+
+  try {
+    //validate struct
+    var [body, err] = validator.Bind(req.params, domain.ProductTypeDeleteRequest).ValidateStruct().Parse();
+    if (err !== null) {
+      switch (err) {
+        case domain.MalformedJSONErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.MalformedJSONErrResMsg });
+        case domain.validationFailureErrResMsg:
+          return res.status(BAD_REQUEST).send({ message: domain.validationFailureErrResMsg });
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalErorAtValidation });
+      }
+    }
+    //service
+    var err = await Service.ProductTypeService.DeleteProductType(db, body.id);
+    if (err !== null) {
+      switch (err) {
+        case domain.ProductTypeIsNotFound:
+          return res.status(NOT_FOUND).send({ message: domain.ProductTypeIsNotFound });
+        default:
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
+      }
+    }
+
+    return res.status(OK).send({ message: domain.MsgProductTypeDeleteSuccess });
   } catch (error) {
     return res.status(INTERNAL_SERVER_ERROR).send({ message: domain.InternalServerError });
   }

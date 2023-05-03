@@ -61,7 +61,9 @@ async function yargsServeHandler({ argv }) {
     app.use(cors());
     app.use(morgan.Middleware());
     app.use(Http.AttachUserServiceHTTPHandler(sequelizeDb));
-    app.use(Http.AttachImageServiceHTTPHandler(sequelizeDb, middleware));
+    app.use(...middleware);
+    app.use(Http.AttachImageServiceHTTPHandler(sequelizeDb));
+    app.use(Http.AttachProductTypeServiceHTTPHandler(sequelizeDb));
 
     //start server
     app.listen(listenPort, () => {

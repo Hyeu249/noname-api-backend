@@ -1,51 +1,46 @@
 const dataTypes = require("@server/lib/dataTypes");
 
 const Var = {
-  MsgImageUploadSuccess: "Upload image successfully.",
-  MsgImageUpdateSuccess: "Update image successfully.",
-  MsgImageDownloadSuccess: "Download image successfully.",
-  MsgImageDeleteSuccess: "Delete image successfully.",
+  MsgProductTypeCreateSuccess: "Create product type successfully.",
+  MsgProductTypeUpdateSuccess: "Update product type successfully.",
+  MsgProductTypeGetListSuccess: "Download get list successfully.",
+  MsgProductTypeDeleteSuccess: "Delete product type successfully.",
 
-  ImageLocationIsNotFound: "Image location is not found.",
-  ImageIsNotFound: "Image is not found.",
-  ThisIsNotSampleImage: "This is not sample image.",
-  ThisUserIsNotTheOwner: "This user is not the owner.",
+  ProductTypeIsNotFound: "Product type is not found.",
 };
 
-const ImageUploadRequest = {
+const ProductTypeCreateRequest = {
   name: {
     type: dataTypes.STRING,
     validate: ["required"],
   },
-
   description: {
     type: dataTypes.STRING,
     validate: [],
   },
-  file_extention: {
-    type: dataTypes.STRING,
-    validate: ["required"],
-  },
-  location: {
-    type: dataTypes.STRING,
-    validate: ["required"],
-  },
-};
-
-const ImageUpdateRequest = {
-  name: {
-    type: dataTypes.STRING,
-    validate: [],
-  },
-
-  description: {
-    type: dataTypes.STRING,
-    validate: [],
-  },
-};
-
-const ImageListRequest = {
   image_id: {
+    type: dataTypes.STRING,
+    validate: ["required"],
+  },
+};
+
+const ProductTypeUpdateRequest = {
+  name: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+  description: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+  image_id: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+};
+
+const ProductTypeListRequest = {
+  id: {
     type: dataTypes.STRING,
     validate: [],
   },
@@ -65,14 +60,14 @@ const ImageListRequest = {
     type: dataTypes.STRING,
     validate: [],
   },
-  type: {
+  image_id: {
     type: dataTypes.STRING,
     validate: [],
   },
 };
 
-const ImageDeleteRequest = {
+const ProductTypeDeleteRequest = {
   id: { type: dataTypes.STRING, validate: ["required"] },
 };
 
-module.exports = { ...Var, ImageUploadRequest, ImageUpdateRequest, ImageListRequest, ImageDeleteRequest };
+module.exports = { ...Var, ProductTypeCreateRequest, ProductTypeUpdateRequest, ProductTypeListRequest, ProductTypeDeleteRequest };
