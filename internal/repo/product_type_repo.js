@@ -21,6 +21,7 @@ async function InsertNewProductType(tx, body) {
       {
         name: body.name,
         description: body.description,
+        colors: body.colors,
         image_id: body.image_id,
       },
       { transaction: tx }
@@ -41,6 +42,7 @@ async function UpdateProductType(tx, body, product_type_id) {
     if (body.name !== undefined) data.name = body.name;
     if (body.description !== undefined) data.description = body.description;
     if (body.image_id !== undefined) data.image_id = body.image_id;
+    if (body.colors !== undefined) data.colors = body.colors;
 
     const _ = await Sequelize.ProductType.update(data, { where: { id: product_type_id }, transaction: tx });
 
@@ -56,14 +58,17 @@ async function GetProductTypeList(tx, body) {
   log.Repo("Start PRODUCT_TYPE Repo GetProductTypeList");
   let offset = 0;
   let limit = 20;
+  const { Op } = Sequelize;
 
   const conditions = {};
-  if (body.id !== undefined) conditions.id = body.id;
-  if (body.name !== undefined) conditions.name = body.name;
-  if (body.description !== undefined) conditions.description = body.description;
-  if (body.image_id !== undefined) conditions.image_id = body.image_id;
+  //exact condition
   if (body.offset !== undefined) offset = body.offset;
   if (body.limit !== undefined) limit = body.limit;
+  if (body.id !== undefined) conditions.id = body.id;
+  if (body.image_id !== undefined) conditions.image_id = body.image_id;
+  //like condition
+  if (body.name !== undefined) conditions.name = { [Op.like]: "%" + body.name + "%" };
+  if (body.description !== undefined) conditions.description = { [Op.like]: "%" + body.description + "%" };
 
   try {
     const productTypes = await Sequelize.ProductType.findAndCountAll(

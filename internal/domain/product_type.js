@@ -22,6 +22,10 @@ const ProductTypeCreateRequest = {
     type: dataTypes.STRING,
     validate: ["required"],
   },
+  colors: {
+    type: dataTypes.ARRAY,
+    validate: ["required"],
+  },
 };
 
 const ProductTypeUpdateRequest = {
@@ -35,6 +39,10 @@ const ProductTypeUpdateRequest = {
   },
   image_id: {
     type: dataTypes.STRING,
+    validate: [],
+  },
+  colors: {
+    type: dataTypes.ARRAY,
     validate: [],
   },
 };
