@@ -9,7 +9,6 @@ class ProductTypeRepo {
   static GetProductTypeList = GetProductTypeList;
   static DetroyProductType = DetroyProductType;
   static IsProductTypeExist = IsProductTypeExist;
-  static IsThisUserOwned = IsThisUserOwned;
 }
 module.exports = ProductTypeRepo;
 
@@ -127,28 +126,6 @@ async function IsProductTypeExist(tx, id) {
     return [count > 0, null];
   } catch (error) {
     log.Error("Finish PRODUCT_TYPE Repo IsProductTypeExist with error", error);
-    return [null, error];
-  }
-}
-
-async function IsThisUserOwned(tx, product_type_id, user_id) {
-  log.Repo("Start PRODUCT_TYPE Repo IsThisUserOwned");
-
-  try {
-    const count = await Sequelize.ProductType.count(
-      {
-        where: {
-          id: product_type_id,
-          user_id: user_id,
-        },
-      },
-      { transaction: tx }
-    );
-
-    log.Repo("Finish PRODUCT_TYPE Repo IsThisUserOwned");
-    return [count > 0, null];
-  } catch (error) {
-    log.Error("Finish PRODUCT_TYPE Repo IsThisUserOwned with error", error);
     return [null, error];
   }
 }

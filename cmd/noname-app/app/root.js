@@ -64,6 +64,7 @@ async function yargsServeHandler({ argv }) {
     app.use(...middleware);
     app.use(Http.AttachImageServiceHTTPHandler(sequelizeDb));
     app.use(Http.AttachProductTypeServiceHTTPHandler(sequelizeDb));
+    app.use(Http.AttachProductServiceHTTPHandler(sequelizeDb));
 
     //start server
     app.listen(listenPort, () => {

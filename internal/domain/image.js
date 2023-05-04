@@ -9,6 +9,7 @@ const Var = {
   ImageLocationIsNotFound: "Image location is not found.",
   ImageIsNotFound: "Image is not found.",
   ThisIsNotSampleImage: "This is not sample image.",
+  ThisIsNotPrintingImage: "This is not printing image.",
   ThisUserIsNotTheOwner: "This user is not the owner.",
 };
 

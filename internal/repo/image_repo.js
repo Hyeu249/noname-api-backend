@@ -12,6 +12,7 @@ class ImageRepo {
   static DetroyImage = DetroyImage;
   static IsImageExist = IsImageExist;
   static IsSampleImage = IsSampleImage;
+  static IsPrintingImage = IsPrintingImage;
   static IsThisUserOwned = IsThisUserOwned;
 }
 module.exports = ImageRepo;
@@ -174,6 +175,28 @@ async function IsSampleImage(tx, image_id) {
     return [count > 0, null];
   } catch (error) {
     log.Error("Finish IMAGE Repo IsSampleImage with error", error);
+    return [null, error];
+  }
+}
+
+async function IsPrintingImage(tx, image_id) {
+  log.Repo("Start IMAGE Repo IsPrintingImage");
+
+  try {
+    const count = await Sequelize.Image.count(
+      {
+        where: {
+          id: image_id,
+          type: Image.Image_types.PRINTING,
+        },
+      },
+      { transaction: tx }
+    );
+
+    log.Repo("Finish IMAGE Repo IsPrintingImage");
+    return [count > 0, null];
+  } catch (error) {
+    log.Error("Finish IMAGE Repo IsPrintingImage with error", error);
     return [null, error];
   }
 }
