@@ -28,19 +28,19 @@ const ProductCreateRequest = {
   },
   x_size: {
     type: dataTypes.NUMBER,
-    validate: ["required"],
+    validate: ["required", "gte=1"],
   },
   y_size: {
     type: dataTypes.NUMBER,
-    validate: ["required"],
+    validate: ["required", "gte=1"],
   },
   cost: {
     type: dataTypes.NUMBER,
-    validate: ["required"],
+    validate: ["required", "gte=1"],
   },
   discount: {
     type: dataTypes.NUMBER,
-    validate: ["required"],
+    validate: ["required", "gte=0"],
   },
   layout: {
     type: dataTypes.STRING,
@@ -67,27 +67,27 @@ const ProductUpdateRequest = {
   },
   product_type_id: {
     type: dataTypes.STRING,
-    validate: ["required"],
+    validate: [],
   },
   x_size: {
     type: dataTypes.NUMBER,
-    validate: ["required"],
+    validate: [],
   },
   y_size: {
     type: dataTypes.NUMBER,
-    validate: ["required"],
+    validate: [],
   },
   cost: {
     type: dataTypes.NUMBER,
-    validate: ["required"],
+    validate: [],
   },
   discount: {
     type: dataTypes.NUMBER,
-    validate: ["required"],
+    validate: [],
   },
   layout: {
     type: dataTypes.STRING,
-    validate: ["required"],
+    validate: [],
   },
   colors: {
     type: dataTypes.ARRAY,
