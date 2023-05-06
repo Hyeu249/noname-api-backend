@@ -119,7 +119,7 @@ async function UpdateProduct(db, body, product_id) {
   }
 }
 
-async function GetProductList(db, body) {
+async function GetProductList(db, body, user_id) {
   log.Service("Start PRODUCT GetProductList Service");
   const tx = await db.transaction();
 
@@ -164,7 +164,7 @@ async function GetProductList(db, body) {
     }
 
     //get products
-    var [products, err] = await Repo.ProductRepo.GetProductList(tx, body);
+    var [products, err] = await Repo.ProductRepo.GetProductList(tx, body, user_id);
     if (err !== null) {
       throw new Error(err);
     }

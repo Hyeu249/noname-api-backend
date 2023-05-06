@@ -82,7 +82,7 @@ async function getProductList(req, res) {
       }
     }
     //service
-    var [products, err] = await Service.ProductService.GetProductList(db, body);
+    var [products, err] = await Service.ProductService.GetProductList(db, body, req.user_id);
     if (err !== null) {
       switch (err) {
         case domain.ProductIsNotFound:

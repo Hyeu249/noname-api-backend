@@ -65,7 +65,7 @@ async function UpdateProduct(tx, body, product_id) {
   }
 }
 
-async function GetProductList(tx, body) {
+async function GetProductList(tx, body, user_id) {
   log.Repo("Start PRODUCT Repo GetProductList");
   let offset = 0;
   let limit = 20;
@@ -91,7 +91,7 @@ async function GetProductList(tx, body) {
     const products = await Sequelize.Product.findAndCountAll(
       {
         include: [
-          { model: Sequelize.Image, attributes: ["location"] },
+          { model: Sequelize.Image, attributes: ["location"], where: { user_id } },
           { model: Sequelize.ProductType, attributes: ["id"], include: [{ model: Sequelize.Image, attributes: ["location"] }] },
         ],
         where: conditions,
