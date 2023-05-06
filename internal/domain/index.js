@@ -3,6 +3,7 @@ const imageDomain = require("./image");
 const productTypeDomain = require("./product_type");
 const productDomain = require("./product");
 const collectionDomain = require("./collection");
+const ProductCollectionRelation = require("./product_collection_relation");
 
 const Var = {
   InternalServerError: "Something bad happened in our server. Please contact the Administrator.",
@@ -33,4 +34,5 @@ module.exports = {
   ...productTypeDomain,
   ...productDomain,
   ...collectionDomain,
+  ...ProductCollectionRelation,
 };
