@@ -3,7 +3,7 @@ const dataTypes = require("@server/lib/dataTypes");
 const Var = {
   MsgProductCreateSuccess: "Create product successfully.",
   MsgProductUpdateSuccess: "Update product successfully.",
-  MsgProductGetListSuccess: "Download get list successfully.",
+  MsgProductGetListSuccess: "Get list successfully.",
   MsgProductDeleteSuccess: "Delete product successfully.",
 
   ProductIsNotFound: "Product is not found.",
