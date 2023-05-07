@@ -40,7 +40,7 @@ const ProductCreateRequest = {
   },
   discount: {
     type: dataTypes.NUMBER,
-    validate: ["required", "gte=0"],
+    validate: [],
   },
   layout: {
     type: dataTypes.STRING,
