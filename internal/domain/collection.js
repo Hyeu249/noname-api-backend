@@ -14,10 +14,18 @@ const CollectionCreateRequest = {
     type: dataTypes.STRING,
     validate: ["required"],
   },
+  description: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
 };
 
 const CollectionUpdateRequest = {
   name: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+  description: {
     type: dataTypes.STRING,
     validate: [],
   },
@@ -37,6 +45,10 @@ const CollectionListRequest = {
     validate: [],
   },
   name: {
+    type: dataTypes.STRING,
+    validate: [],
+  },
+  description: {
     type: dataTypes.STRING,
     validate: [],
   },

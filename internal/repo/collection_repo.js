@@ -19,6 +19,7 @@ async function InsertNewCollection(tx, body, user_id) {
     const _ = await Sequelize.Collection.create(
       {
         name: body.name,
+        description: body.description,
         user_id: user_id,
       },
       { transaction: tx }
@@ -37,6 +38,7 @@ async function UpdateCollection(tx, body, collection_id) {
   try {
     const data = {};
     if (body.name !== undefined) data.name = body.name;
+    if (body.description !== undefined) data.description = body.description;
 
     const _ = await Sequelize.Collection.update(data, { where: { id: collection_id }, transaction: tx });
 
@@ -62,6 +64,7 @@ async function GetCollectionList(tx, body, user_id) {
 
   //like condition
   if (body.name !== undefined) conditions.name = { [Op.like]: "%" + body.name + "%" };
+  if (body.description !== undefined) conditions.description = { [Op.like]: "%" + body.description + "%" };
 
   try {
     const collections = await Sequelize.Collection.findAndCountAll(
