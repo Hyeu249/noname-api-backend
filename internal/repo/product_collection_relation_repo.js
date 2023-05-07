@@ -65,6 +65,10 @@ async function GetProductCollectionRelationList(tx, body) {
   try {
     const productCollectionRelations = await Sequelize.ProductCollectionRelation.findAndCountAll(
       {
+        include: [
+          { model: Sequelize.Product, attributes: ["name"] },
+          { model: Sequelize.Collection, attributes: ["name"] },
+        ],
         where: conditions,
         offset: Number(offset),
         limit: Number(limit),
