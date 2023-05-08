@@ -18,12 +18,16 @@ const ProductTypeCreateRequest = {
     type: dataTypes.STRING,
     validate: [],
   },
-  image_id: {
-    type: dataTypes.STRING,
+  base_cost: {
+    type: dataTypes.NUMBER,
     validate: ["required"],
   },
   colors: {
     type: dataTypes.ARRAY,
+    validate: ["required"],
+  },
+  image_id: {
+    type: dataTypes.STRING,
     validate: ["required"],
   },
 };
@@ -37,12 +41,16 @@ const ProductTypeUpdateRequest = {
     type: dataTypes.STRING,
     validate: [],
   },
-  image_id: {
-    type: dataTypes.STRING,
+  base_cost: {
+    type: dataTypes.NUMBER,
     validate: [],
   },
   colors: {
     type: dataTypes.ARRAY,
+    validate: [],
+  },
+  image_id: {
+    type: dataTypes.STRING,
     validate: [],
   },
 };
@@ -66,6 +74,10 @@ const ProductTypeListRequest = {
   },
   description: {
     type: dataTypes.STRING,
+    validate: [],
+  },
+  base_cost: {
+    type: dataTypes.NUMBER,
     validate: [],
   },
   image_id: {

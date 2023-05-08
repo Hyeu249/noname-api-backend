@@ -21,6 +21,7 @@ async function InsertNewProductType(tx, body) {
         name: body.name,
         description: body.description,
         colors: body.colors,
+        base_cost: body.base_cost,
         image_id: body.image_id,
       },
       { transaction: tx }
@@ -40,8 +41,9 @@ async function UpdateProductType(tx, body, product_type_id) {
     const data = {};
     if (body.name !== undefined) data.name = body.name;
     if (body.description !== undefined) data.description = body.description;
-    if (body.image_id !== undefined) data.image_id = body.image_id;
     if (body.colors !== undefined) data.colors = body.colors;
+    if (body.base_cost !== undefined) data.base_cost = body.base_cost;
+    if (body.image_id !== undefined) data.image_id = body.image_id;
 
     const _ = await Sequelize.ProductType.update(data, { where: { id: product_type_id }, transaction: tx });
 
@@ -64,6 +66,7 @@ async function GetProductTypeList(tx, body) {
   if (body.offset !== undefined) offset = body.offset;
   if (body.limit !== undefined) limit = body.limit;
   if (body.id !== undefined) conditions.id = body.id;
+  if (body.base_cost !== undefined) conditions.base_cost = body.base_cost;
   if (body.image_id !== undefined) conditions.image_id = body.image_id;
   //like condition
   if (body.name !== undefined) conditions.name = { [Op.like]: "%" + body.name + "%" };
