@@ -22,9 +22,10 @@ async function InsertNewProduct(tx, body) {
         description: body.description,
         x_size: body.x_size,
         y_size: body.y_size,
+        top: body.top,
+        left: body.left,
         cost: body.cost,
         discount: body.discount,
-        layout: body.layout,
         colors: body.colors,
         image_id: body.image_id,
         product_type_id: body.product_type_id,
@@ -49,9 +50,10 @@ async function UpdateProduct(tx, body, product_id) {
     if (body.image_id !== undefined) data.image_id = body.image_id;
     if (body.product_type_id !== undefined) data.product_type_id = body.product_type_id;
     if (body.colors !== undefined) data.colors = body.colors;
-    if (body.layout !== undefined) data.layout = body.layout;
     if (body.x_size !== undefined) data.x_size = body.x_size;
     if (body.y_size !== undefined) data.y_size = body.y_size;
+    if (body.top !== undefined) data.top = body.top;
+    if (body.left !== undefined) data.left = body.left;
     if (body.cost !== undefined) data.cost = body.cost;
     if (body.discount !== undefined) data.discount = body.discount;
 
@@ -78,7 +80,6 @@ async function GetProductList(tx, body, user_id) {
   if (body.id !== undefined) conditions.id = body.id;
   if (body.x_size !== undefined) conditions.x_size = body.x_size;
   if (body.y_size !== undefined) conditions.y_size = body.y_size;
-  if (body.layout !== undefined) conditions.layout = body.layout;
   if (body.cost !== undefined) conditions.cost = body.cost;
   if (body.discount !== undefined) conditions.discount = body.discount;
   if (body.image_id !== undefined) conditions.image_id = body.image_id;

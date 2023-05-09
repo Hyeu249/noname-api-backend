@@ -34,6 +34,14 @@ const ProductCreateRequest = {
     type: dataTypes.NUMBER,
     validate: ["required", "gte=1"],
   },
+  top: {
+    type: dataTypes.NUMBER,
+    validate: ["required"],
+  },
+  left: {
+    type: dataTypes.NUMBER,
+    validate: ["required"],
+  },
   cost: {
     type: dataTypes.NUMBER,
     validate: ["required", "gte=1"],
@@ -41,10 +49,6 @@ const ProductCreateRequest = {
   discount: {
     type: dataTypes.NUMBER,
     validate: [],
-  },
-  layout: {
-    type: dataTypes.STRING,
-    validate: ["required"],
   },
   colors: {
     type: dataTypes.ARRAY,
@@ -77,16 +81,20 @@ const ProductUpdateRequest = {
     type: dataTypes.NUMBER,
     validate: [],
   },
+  top: {
+    type: dataTypes.NUMBER,
+    validate: [],
+  },
+  left: {
+    type: dataTypes.NUMBER,
+    validate: [],
+  },
   cost: {
     type: dataTypes.NUMBER,
     validate: [],
   },
   discount: {
     type: dataTypes.NUMBER,
-    validate: [],
-  },
-  layout: {
-    type: dataTypes.STRING,
     validate: [],
   },
   colors: {
@@ -138,10 +146,6 @@ const ProductListRequest = {
   },
   discount: {
     type: dataTypes.NUMBER,
-    validate: [],
-  },
-  layout: {
-    type: dataTypes.STRING,
     validate: [],
   },
 };
